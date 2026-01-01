@@ -195,6 +195,33 @@
         .cmd-btn.unlocked:hover .cmd-btn-img { opacity: 1; filter: drop-shadow(0 0 40px var(--c-blue)) brightness(1.3); }
         .cmd-btn.unlocked:active { transform: scale(1.6); transition: transform 0.05s; }
         .cmd-btn.unlocked:active .cmd-btn-img { filter: none; opacity: 1; }
+		
+		/* --- FOOTER STATUS (มุมขวาล่าง) --- */
+        .footer-status {
+            position: absolute;
+            bottom: 20px; 
+            right: 30px;
+            display: flex; align-items: center; gap: 12px;
+            z-index: 50; 
+            pointer-events: none; /* ไม่บังการคลิกส่วนอื่น */
+        }
+        .status-dot {
+            width: 8px; height: 8px; 
+            background-color: #00ff66; /* สีเขียว (หรือใช้ var(--c-green) ถ้ามี) */
+            border-radius: 50%;
+            box-shadow: 0 0 8px #00ff66;
+        }
+        .footer-text {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 16px; font-weight: 600;
+            color: rgba(255, 255, 255, 0.6); /* ขาวขุ่น */
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.2); /* เรืองแสงเบาๆ */
+            letter-spacing: 1px;
+        }
+		        .footer-logo {
+            height: 35px; width: auto;
+            opacity: 0.9;
+        }
 
     </style>
 </head>
@@ -401,6 +428,10 @@
             });
         });
     </script>
+	<div class="footer-status">
+        <div class="status-dot"></div>
+        <span class="footer-text">OO CNC Interface powerby Maker Customs OS</span>
+		<img src="images/oologo.png" alt="OO Logo" class="footer-logo">
+    </div>
 </body>
-
 </html>
