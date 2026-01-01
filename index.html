@@ -2,7 +2,7 @@
 <html lang="th">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Maker Customs OS - OO CNC Interface</title>
     <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;700&family=Prompt:wght@500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -19,12 +19,12 @@
             --c-green: #00ff66;
             --c-blue: #00f3ff;
             --c-purple: #bd00ff;
-            --c-gold: #ffcc00; /* สีสำหรับ Hero/War */
+            --c-gold: #ffcc00;
         }
 
         body {
             margin: 0; padding: 0;
-            width: 1270px; height: 720px;
+            width: 100vw; height: 100vh; /* ปรับเป็นเต็มหน้าจอเสมอ */
             background-color: var(--bg-deep);
             background-image: radial-gradient(#1a1a1a 1px, transparent 1px);
             background-size: 30px 30px;
@@ -35,7 +35,7 @@
         }
 
         /* =========================================
-           2. SIDEBAR
+           2. SIDEBAR (Desktop Default)
            ========================================= */
         .sidebar {
             width: 380px;
@@ -47,6 +47,7 @@
             z-index: 100;
             box-shadow: 20px 0 50px rgba(0,0,0,0.9);
             transition: transform 0.4s ease;
+            flex-shrink: 0; /* ไม่ให้หดตัว */
         }
 
         /* CENTER MENU */
@@ -54,6 +55,7 @@
             flex: 1; 
             display: flex; flex-direction: column; 
             justify-content: center; gap: 20px;
+            overflow-y: auto; /* เผื่อหน้าจอเตี้ย */
         }
 
         /* BOTTOM CONTROLS */
@@ -64,15 +66,13 @@
             display: flex; flex-direction: column;
             gap: 12px;
             align-items: center;
+            flex-shrink: 0;
         }
 
-        /* 1. Music Selector Row */
-        .music-panel {
-            display: flex; gap: 8px; width: 100%; justify-content: center;
-        }
-        
+        /* Music & Sound Panels */
+        .music-panel { display: flex; gap: 8px; width: 100%; justify-content: center; }
         .music-btn {
-            flex: 1; /* ขยายเต็มพื้นที่ */
+            flex: 1;
             font-family: 'Rajdhani'; font-weight: bold; font-size: 14px;
             background: #1a1a1a; color: #666;
             padding: 6px 0; border-radius: 8px;
@@ -80,48 +80,31 @@
             border: 1px solid #333; text-align: center;
             text-transform: uppercase; letter-spacing: 1px;
         }
-        
         .music-btn:hover { background: #333; color: white; }
-        
-        /* Active Music State */
         .music-btn.active {
             background: var(--c-gold); color: black; border-color: var(--c-gold);
             box-shadow: 0 0 10px var(--c-gold);
         }
 
-        /* 2. Sound Control Row */
         .sound-panel {
             display: flex; align-items: center; gap: 15px;
-            color: #888;
-            background: #111;
-            padding: 8px 20px;
-            border-radius: 30px;
-            width: 100%; justify-content: center; box-sizing: border-box;
+            color: #888; background: #111; padding: 8px 20px;
+            border-radius: 30px; width: 100%; justify-content: center; box-sizing: border-box;
         }
-
-        #mute-btn {
-            font-size: 20px; cursor: pointer; transition: 0.3s;
-            width: 24px; text-align: center;
-        }
+        #mute-btn { font-size: 20px; cursor: pointer; transition: 0.3s; width: 24px; text-align: center; }
         #mute-btn:hover, #mute-btn.active { color: var(--c-blue); text-shadow: 0 0 10px var(--c-blue); }
-
         .vol-levels { display: flex; gap: 5px; }
-        
         .vol-btn {
             font-family: 'Rajdhani'; font-weight: bold; font-size: 14px;
-            background: #222; color: #666;
-            padding: 2px 8px; border-radius: 6px;
+            background: #222; color: #666; padding: 2px 8px; border-radius: 6px;
             cursor: pointer; transition: 0.3s; border: 1px solid #333;
         }
         .vol-btn:hover { background: #333; color: white; }
         .vol-btn.active { background: var(--c-blue); color: black; border-color: var(--c-blue); }
 
-        /* 3. Language Switch Row */
         .lang-switch {
-            font-family: 'Prompt', sans-serif; 
-            font-weight: 700; font-size: 16px; color: #888; 
-            cursor: pointer; transition: 0.3s;
-            display: flex; gap: 8px; align-items: center;
+            font-family: 'Prompt', sans-serif; font-weight: 700; font-size: 16px; color: #888; 
+            cursor: pointer; transition: 0.3s; display: flex; gap: 8px; align-items: center;
         }
         .lang-switch:hover { color: white; transform: scale(1.05); }
 
@@ -134,6 +117,7 @@
             font-weight: 700; transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
             box-shadow: 0 10px 20px rgba(0,0,0,0.5);
             text-align: center; line-height: 1.2;
+            flex-shrink: 0;
         }
         .main-btn:hover { transform: scale(1.05) translateY(-5px); background-color: #1a1d24; }
         .main-btn:active { transform: scale(0.95); }
@@ -145,15 +129,17 @@
         .btn-purple { height: 120px; font-size: 32px; color: var(--c-purple); text-shadow: 0 0 20px rgba(189, 0, 255, 0.4); border-bottom: 4px solid rgba(189, 0, 255, 0.1); }
 
         /* CONTENT & PRO MODE */
-        .main-content { flex: 1; position: relative; overflow: hidden; }
+        .main-content { flex: 1; position: relative; overflow: hidden; width: 100%; }
         .fade-element { opacity: 1; transition: opacity 0.4s ease; }
         #viewer-container { width: 100%; height: 100%; }
         iframe { width: 100%; height: 100%; border: none; }
 
+        /* PRO MODE OVERLAY */
         #pro-mode-container {
             display: none; opacity: 0; 
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
             z-index: 2000; background: radial-gradient(circle at center, #111 0%, #000 100%);
+            overflow-y: auto; /* Allow scroll on small screens */
         }
 
         .back-btn {
@@ -161,7 +147,7 @@
             font-size: 20px; color: #666; font-weight: bold;
             cursor: pointer; display: flex; align-items: center; gap: 10px;
             padding: 10px 20px; border-radius: 30px; border: 2px solid #333;
-            transition: 0.3s; z-index: 3000;
+            transition: 0.3s; z-index: 3000; background: rgba(0,0,0,0.5);
         }
         .back-btn:hover { color: white; border-color: white; background: rgba(255,255,255,0.1); }
 
@@ -178,7 +164,6 @@
         .grid-wrapper { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 40px; width: 90%; max-width: 1100px; height: 100%; margin: 0 auto; align-content: center; }
         .col-group { display: flex; flex-direction: column; gap: 40px; justify-content: center; }
 
-        /* CMD BUTTONS */
         .cmd-btn {
             background: transparent; border: none; position: relative; 
             display: flex; justify-content: center; align-items: center;
@@ -191,36 +176,74 @@
         }
         .cmd-btn.unlocked { cursor: pointer; }
         .cmd-btn.unlocked .cmd-btn-img { opacity: 0.8; filter: grayscale(100%) drop-shadow(0 0 10px var(--c-green)); }
-        .cmd-btn.unlocked:hover { transform: scale(1.8); z-index: 100; }
-        .cmd-btn.unlocked:hover .cmd-btn-img { opacity: 1; filter: drop-shadow(0 0 40px var(--c-blue)) brightness(1.3); }
-        .cmd-btn.unlocked:active { transform: scale(1.6); transition: transform 0.05s; }
+        .cmd-btn.unlocked:hover { transform: scale(1.1); z-index: 100; } /* Reduced scale for mobile safety */
+        .cmd-btn.unlocked:active { transform: scale(0.95); }
         .cmd-btn.unlocked:active .cmd-btn-img { filter: none; opacity: 1; }
-		
-		/* --- FOOTER STATUS (มุมขวาล่าง) --- */
+        
         .footer-status {
-            position: absolute;
-            bottom: 20px; 
-            right: 30px;
+            position: absolute; bottom: 20px; right: 30px;
             display: flex; align-items: center; gap: 12px;
-            z-index: 50; 
-            pointer-events: none; /* ไม่บังการคลิกส่วนอื่น */
+            z-index: 50; pointer-events: none;
         }
-        .status-dot {
-            width: 8px; height: 8px; 
-            background-color: #00ff66; /* สีเขียว (หรือใช้ var(--c-green) ถ้ามี) */
-            border-radius: 50%;
-            box-shadow: 0 0 8px #00ff66;
-        }
+        .status-dot { width: 8px; height: 8px; background-color: #00ff66; border-radius: 50%; box-shadow: 0 0 8px #00ff66; }
         .footer-text {
-            font-family: 'Rajdhani', sans-serif;
-            font-size: 16px; font-weight: 600;
-            color: rgba(255, 255, 255, 0.6); /* ขาวขุ่น */
-            text-shadow: 0 0 10px rgba(255, 255, 255, 0.2); /* เรืองแสงเบาๆ */
-            letter-spacing: 1px;
+            font-family: 'Rajdhani', sans-serif; font-size: 16px; font-weight: 600;
+            color: rgba(255, 255, 255, 0.6); text-shadow: 0 0 10px rgba(255, 255, 255, 0.2); letter-spacing: 1px;
         }
-		        .footer-logo {
-            height: 35px; width: auto;
-            opacity: 0.9;
+        .footer-logo { height: 35px; width: auto; opacity: 0.9; }
+
+        /* MOBILE LOCK TOGGLE (Hidden on desktop) */
+        #mobile-lock-toggle {
+            display: none;
+            position: absolute; bottom: 100px; right: 30px;
+            width: 60px; height: 60px; border-radius: 50%;
+            background: #222; border: 2px solid #444; color: #666;
+            z-index: 3000; justify-content: center; align-items: center;
+            font-size: 24px; cursor: pointer; box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+            transition: 0.3s;
+        }
+        #mobile-lock-toggle.unlocked {
+            background: var(--c-green); color: #000; border-color: #fff;
+            box-shadow: 0 0 20px var(--c-green);
+        }
+
+        /* =========================================
+           3. RESPONSIVE / MOBILE STYLES
+           ========================================= */
+        @media screen and (max-width: 900px) {
+            body { flex-direction: column-reverse; /* Menu bottom, Viewer top */ }
+            
+            .sidebar { 
+                width: 100%; height: 50vh; /* Half screen for controls */
+                padding: 15px; 
+                box-shadow: 0 -10px 30px rgba(0,0,0,0.8);
+            }
+            
+            .main-content { height: 50vh; /* Half screen for viewer */ }
+            
+            .btn-green, .btn-blue, .btn-purple { height: 80px; font-size: 24px; }
+            .btn-red { height: 60px; font-size: 18px; }
+            
+            .menu-group { gap: 10px; }
+            .bottom-controls { display: none; /* Hide complex controls on mobile to save space, or keep simple */ }
+            
+            /* Pro Mode Mobile Adjustment */
+            .grid-wrapper { 
+                grid-template-columns: 1fr; /* Stack vertically */
+                gap: 10px; padding-top: 80px; padding-bottom: 50px;
+                height: auto; overflow-y: auto; display: flex; flex-direction: column;
+            }
+            .cmd-btn { height: 150px; }
+            
+            .back-btn { top: 15px; left: 15px; font-size: 14px; padding: 8px 15px; }
+            
+            /* Hide Desktop Status Bar on Mobile */
+            #status-bar { display: none; }
+            
+            /* Show Mobile Lock Toggle */
+            #mobile-lock-toggle { display: flex; }
+            
+            .footer-status { display: none; /* Hide footer on mobile */ }
         }
 
     </style>
@@ -230,7 +253,6 @@
     <audio id="bgm" loop autoplay> <source src="sounds/focus.mp3" type="audio/mpeg"> </audio>
 
     <div class="sidebar" id="main-sidebar">
-        
         <div class="menu-group">
             <button class="main-btn btn-green" onmouseenter="playSfx('hover')" onclick="playSfx('select'); window.location.href='page_Starter.html'"><span data-lang="starter">โหมดผู้เริ่มต้น</span></button>
             <button class="main-btn btn-blue" onmouseenter="playSfx('hover')" onclick="toggleProMode()"><span data-lang="pro">โหมดมืออาชีพ</span></button>
@@ -239,7 +261,6 @@
         </div>
 
         <div class="bottom-controls">
-            
             <div class="music-panel">
                 <div class="music-btn active" onclick="changeTrack('focus', this)">FOCUS</div>
                 <div class="music-btn" onclick="changeTrack('war', this)">WAR</div>
@@ -259,7 +280,6 @@
                 <i class="fa-solid fa-globe"></i> <span id="lang-text">TH / ENG</span>
             </div>
         </div>
-
     </div>
 
     <div class="main-content" id="viewer-area">
@@ -274,8 +294,13 @@
         <div class="back-btn" onclick="toggleProMode()">
             <i class="fa-solid fa-arrow-left"></i> <span data-lang="back">BACK / กลับเมนูหลัก</span>
         </div>
+        
         <div id="status-bar"><i class="fa-solid fa-triangle-exclamation"></i> <span data-lang="status_idle">HOLD [CTRL] TO UNLOCK</span></div>
         
+        <div id="mobile-lock-toggle" onclick="toggleMobileLock()">
+            <i class="fa-solid fa-lock" id="lock-icon"></i>
+        </div>
+
         <div class="grid-wrapper">
             <div class="col-group">
                 <div class="cmd-btn" data-cmd="run_6p_joy"><div class="cmd-btn-img" style="background-image: url('images/6p_joy_start.png');"></div></div>
@@ -295,6 +320,12 @@
     <audio id="sfx-hover" preload="auto"> <source src="sounds/ui_hover.wav" type="audio/wav"> </audio>
     <audio id="sfx-select" preload="auto"> <source src="sounds/ui_select.wav" type="audio/wav"> </audio>
     <audio id="sfx-start" preload="auto"> <source src="sounds/ui_start.wav" type="audio/wav"> </audio>
+
+    <div class="footer-status">
+        <div class="status-dot"></div>
+        <span class="footer-text">OO CNC Interface powerby Maker Customs OS</span>
+        <img src="images/oologo.png" alt="OO Logo" class="footer-logo">
+    </div>
 
     <script>
         // --- TRANSLATIONS ---
@@ -327,7 +358,6 @@
         const muteBtn = document.getElementById('mute-btn');
         bgm.volume = 0.1;
 
-        // รายชื่อเพลง
         const tracks = {
             focus: "sounds/focus.mp3",
             war: "sounds/war.mp3",
@@ -336,28 +366,15 @@
 
         function changeTrack(trackName, btnEl) {
             playSfx('select');
-            
-            // เปลี่ยน source
-            const wasPlaying = !bgm.paused;
             bgm.src = tracks[trackName];
-            
-            // ถ้าเดิมเล่นอยู่ ให้เล่นเพลงใหม่ต่อเลย ถ้าหยุดอยู่ ก็เปลี่ยน source เฉยๆ (แต่ถ้าอยากให้กดแล้วเล่นเลย ให้สั่ง play())
-            // Logic: กดเปลี่ยนเพลง = อยากฟัง -> play()
-            bgm.play().then(() => {
-                updateMuteIcon();
-            }).catch(e => console.log(e));
-
-            // Update Active UI
+            bgm.play().then(() => { updateMuteIcon(); }).catch(e => console.log(e));
             document.querySelectorAll('.music-btn').forEach(b => b.classList.remove('active'));
             btnEl.classList.add('active');
         }
 
         function toggleBGM() {
-            if(bgm.paused) {
-                bgm.play().then(() => updateMuteIcon());
-            } else {
-                bgm.pause(); updateMuteIcon();
-            }
+            if(bgm.paused) { bgm.play().then(() => updateMuteIcon()); } 
+            else { bgm.pause(); updateMuteIcon(); }
         }
 
         function setVolume(level, btnId) {
@@ -395,43 +412,73 @@
             if(s){ s.currentTime=0; s.volume=(id==='hover'?0.4:1.0); s.play().catch(()=>{}); }
         }
 
-        // --- CTRL LOGIC ---
-        let isCtrl = false;
+        // --- UNLOCK LOGIC (CTRL & MOBILE TOGGLE) ---
+        let isUnlocked = false;
         const btns = document.querySelectorAll('.cmd-btn');
         const statusBar = document.getElementById('status-bar');
         const statusTextEl = document.querySelector('[data-lang="status_idle"]');
+        
+        // Mobile Toggle Logic
+        function toggleMobileLock() {
+            isUnlocked = !isUnlocked;
+            const toggleBtn = document.getElementById('mobile-lock-toggle');
+            const lockIcon = document.getElementById('lock-icon');
+            
+            if(isUnlocked) {
+                toggleBtn.classList.add('unlocked');
+                lockIcon.classList.remove('fa-lock');
+                lockIcon.classList.add('fa-lock-open');
+                setUnlockedState(true);
+                playSfx('start'); // Sound feedback
+            } else {
+                toggleBtn.classList.remove('unlocked');
+                lockIcon.classList.remove('fa-lock-open');
+                lockIcon.classList.add('fa-lock');
+                setUnlockedState(false);
+                playSfx('select');
+            }
+        }
 
-        document.addEventListener('keydown', e => {
-            if(e.key === 'Control' && !isCtrl) {
-                isCtrl = true;
+        function setUnlockedState(active) {
+            if(active) {
                 statusTextEl.innerText = translations[currentLang].status_armed;
                 statusBar.classList.add('active'); 
                 btns.forEach(b => b.classList.add('unlocked'));
+            } else {
+                statusTextEl.innerText = translations[currentLang].status_idle;
+                statusBar.classList.remove('active');
+                btns.forEach(b => b.classList.remove('unlocked'));
+            }
+        }
+
+        // Keyboard Logic
+        document.addEventListener('keydown', e => {
+            if(e.key === 'Control' && !isUnlocked) {
+                isUnlocked = true;
+                setUnlockedState(true);
                 playSfx('hover');
             }
         });
         document.addEventListener('keyup', e => {
             if(e.key === 'Control') {
-                isCtrl = false;
-                statusTextEl.innerText = translations[currentLang].status_idle;
-                statusBar.classList.remove('active');
-                btns.forEach(b => b.classList.remove('unlocked'));
+                isUnlocked = false;
+                setUnlockedState(false);
             }
         });
+
+        // Button Action
         btns.forEach(btn => {
-            btn.addEventListener('mouseenter', () => { if(isCtrl) playSfx('hover'); });
+            btn.addEventListener('mouseenter', () => { if(isUnlocked) playSfx('hover'); });
             btn.addEventListener('click', () => {
-                if(isCtrl) {
+                if(isUnlocked) {
                     playSfx('start');
                     if(window.ahk) window.ahk.global.CNC_Execute(btn.getAttribute('data-cmd'));
-                } else { playSfx('select'); }
+                } else { 
+                    playSfx('select'); 
+                    // Optional: Shake animation or visual feedback that it's locked
+                }
             });
         });
     </script>
-	<div class="footer-status">
-        <div class="status-dot"></div>
-        <span class="footer-text">OO CNC Interface powerby Maker Customs OS</span>
-		<img src="images/oologo.png" alt="OO Logo" class="footer-logo">
-    </div>
 </body>
 </html>
