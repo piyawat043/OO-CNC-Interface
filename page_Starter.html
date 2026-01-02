@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <title>Measure Cycle - Genius Mode</title>
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* =========================================
+           1. CSS DESIGN (ฝังรวมในไฟล์เดียว)
+           ========================================= */
+        :root {
+            --neon: #00f3ff;
+            --neon-dim: rgba(0, 243, 255, 0.2);
+            --danger: #ff003c;
+            --bg-dark: #050505;
+            --panel-bg: rgba(20, 30, 40, 0.85);
+            --border: rgba(255, 255, 255, 0.15);
+            --text-main: #ffffff;
+            --text-dim: rgba(255, 255, 255, 0.5);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; user-select: none; }
+        
+        body {
+            background-color: var(--bg-dark);
+            /* ลายตาราง Tech Grid */
+            background-image: 
+                linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+            color: var(--text-main);
+            font-family: 'Rajdhani', sans-serif;
+            height: 100vh; overflow: hidden; display: flex;
+        }
+
+        /* SIDEBAR (เมนูซ้าย) */
+        .sidebar {
+            width: 80px; background: rgba(10, 12, 16, 0.95);
+            border-right: 1px solid var(--border);
+            display: flex; flex-direction: column; padding-top: 20px; z-index: 100;
+            transition: width 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+        .sidebar:hover { width: 240px; }
+        .menu-item {
+            display: flex; align-items: center; height: 60px;
+            padding-left: 20px; cursor: pointer; color: var(--text-dim); transition: 0.3s;
+            overflow: hidden; border-left: 3px solid transparent;
+        }
+        .menu-item:hover { color: white; background: rgba(255,255,255,0.05); }
+        .menu-item.active { 
+            color: var(--neon); background: linear-gradient(90deg, rgba(0, 243, 255, 0.1), transparent);
+            border-left-color: var(--neon);
+        }
+        .icon-box { width: 40px; display: flex; justify-content: center; font-size: 20px; flex-shrink: 0; }
+        .menu-text { font-size: 18px; font-weight: 600; margin-left: 15px; opacity: 0; transition: 0.2s; white-space: nowrap; }
+        .sidebar:hover .menu-text { opacity: 1; }
+
+        /* MAIN AREA */
+        .main-content { flex: 1; position: relative; z-index: 10; padding: 20px; }
+        
+        .header-title {
+            font-size: 24px; font-weight: 700; color: var(--neon); text-transform: uppercase; letter-spacing: 2px;
+            border-bottom: 1px solid var(--border); padding-bottom: 15px; margin-bottom: 20px;
+            display: flex; align-items: center; gap: 10px;
+        }
+
+        /* --- GRID VIEW (หน้าเลือกแรก) --- */
+        #view-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; max-width: 1000px; margin: 0 auto; height: 600px; }
+        .tech-card {
+            background: var(--panel-bg); border: 1px solid var(--border); border-radius: 12px;
+            display: flex; justify-content: center; align-items: center;
+            cursor: pointer; position: relative; overflow: hidden; transition: 0.3s;
+        }
+        .tech-card img { width: 60%; height: 60%; object-fit: contain; opacity: 0.7; transition: 0.3s; }
+        .tech-card:hover { border-color: var(--neon); box-shadow: 0 0 20px rgba(0, 243, 255, 0.15); transform: translateY(-2px); }
+        .box-main { grid-column: 1 / 2; grid-row: 1 / 3; background: rgba(0, 243, 255, 0.05); }
+        .bottom-row { grid-column: 1 / 3; display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; height: 200px; }
+
+        /* --- FLOW VIEW (หน้าทำงาน - Fix ตำแหน่ง) --- */
+        #view-flow { 
+            display: none; width: 100%; height: 100%; position: relative; 
+            transform-origin: top left; /* รองรับการย่อขยาย */
+        }
+        
+        #connection-layer { position: absolute; inset: 0; pointer-events: none; z-index: 0; width: 100%; height: 100%; }
+        .flow-line {
+            fill: none; stroke: var(--neon); stroke-width: 2px; stroke-dasharray: 8 4;
+            animation: dash 60s linear infinite; filter: drop-shadow(0 0 5px var(--neon)); opacity: 0; transition: opacity 0.5s;
+        }
+        .flow-line.visible { opacity: 0.6; }
+        @keyframes dash { to { stroke-dashoffset: -1000; } }
+
+        /* === FIXED POSITIONS (ตำแหน่งตายตัวตามรูป) === */
+        
+        /* 1. SELECTED BOX */
+        #box-selected {
+            position: absolute; left: 120px; top: 240px; width: 220px; height: 220px;
+            background: rgba(0, 243, 255, 0.05); border: 2px solid var(--neon); border-radius: 16px;
+            box-shadow: 0 0 30px rgba(0, 243, 255, 0.1);
+            display: flex; justify-content: center; align-items: center; z-index: 2;
+        }
+        #box-selected img { width: 85%; height: 85%; object-fit: contain; filter: drop-shadow(0 0 10px var(--neon)); }
+
+        /* 2. INPUTS (วางตำแหน่งตามรูปภาพเป๊ะๆ) */
+        .input-option {
+            position: absolute; width: 220px; height: 110px;
+            background: var(--panel-bg); border: 1px solid var(--border); border-radius: 12px;
+            display: flex; justify-content: center; align-items: center; cursor: pointer; transition: 0.3s; z-index: 2;
+        }
+        .input-option:hover { border-color: var(--neon); background: rgba(0,243,255,0.05); }
+        .input-option.selected { 
+            border: 2px solid var(--neon); background: rgba(0, 243, 255, 0.1); 
+            box-shadow: 0 0 25px rgba(0, 243, 255, 0.3); z-index: 5; 
+        }
+        .input-option img { width: 60%; height: 60%; object-fit: contain; opacity: 0.6; transition: 0.3s; }
+        .input-option.selected img { opacity: 1; filter: drop-shadow(0 0 8px var(--neon)); }
+
+        #opt-joy { left: 480px; top: 220px; }   /* Joystick อยู่กลางบน */
+        #opt-cam { left: 530px; top: 430px; }   /* Camera เยื้องขวาล่าง */
+
+        /* 3. CTRL LABEL */
+        #lbl-ctrl {
+            position: absolute; left: 820px; top: 250px; /* ค่าเริ่มต้น เดี๋ยว JS คำนวณใหม่ */
+            background: white; color: black; padding: 8px 15px; border-radius: 8px;
+            font-weight: bold; font-size: 1.2em; box-shadow: 0 0 15px rgba(255,255,255,0.2);
+            opacity: 0; transition: 0.3s; z-index: 10;
+        }
+        #lbl-ctrl.visible { opacity: 1; }
+
+        /* 4. START BUTTON */
+        #btn-start {
+            position: absolute; left: 950px; top: 130px; width: 300px; height: 300px;
+            background: transparent; border: 2px solid #555; border-radius: 16px;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            opacity: 0.4; pointer-events: none; overflow: hidden; transition: 0.3s; z-index: 2;
+        }
+        #btn-start-img { width: 100%; height: 100%; object-fit: cover; opacity: 0.3; filter: grayscale(100%); transition: 0.3s; }
+        #btn-start-text {
+            position: absolute; bottom: 30px; width: 100%; text-align: center;
+            font-size: 2.2em; font-weight: 800; color: #666; text-shadow: 2px 2px 4px rgba(0,0,0,0.8); transition: 0.3s;
+        }
+        
+        #btn-start.ready { border-color: #888; opacity: 0.7; } /* รอ Ctrl */
+        #btn-start.armed { 
+            border-color: var(--neon); opacity: 1; pointer-events: auto; cursor: pointer;
+            box-shadow: 0 0 40px rgba(0, 243, 255, 0.3);
+        }
+        #btn-start.armed #btn-start-img { opacity: 1; filter: grayscale(0%); }
+        #btn-start.armed #btn-start-text { color: white; text-shadow: 0 0 15px var(--neon); }
+
+        /* 5. TUTORIAL BUTTON */
+        #btn-tutorial {
+            position: absolute; left: 960px; top: 560px; width: 280px; height: 70px;
+            background: var(--neon); color: black; border-radius: 50px;
+            font-weight: bold; font-size: 1.2em; cursor: pointer;
+            display: flex; justify-content: center; align-items: center; gap: 10px;
+            box-shadow: 0 0 20px rgba(0, 243, 255, 0.4);
+            opacity: 0; transform: translateY(20px); transition: 0.5s; z-index: 2;
+        }
+        #btn-tutorial:hover { transform: scale(1.05) translateY(0); background: white; }
+        #btn-tutorial.visible { opacity: 1; transform: translateY(0); }
+
+        /* BACK BUTTON */
+        .back-btn {
+            position: absolute; top: 0; left: 0; background: transparent;
+            border: 1px solid var(--border); color: var(--text-dim);
+            padding: 8px 20px; border-radius: 4px; cursor: pointer;
+            font-family: 'Rajdhani'; font-weight: bold; transition: 0.3s; z-index: 20;
+        }
+        .back-btn:hover { border-color: var(--neon); color: var(--neon); }
+
+        /* VIDEO MODAL */
+        #modal-overlay {
+            display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95);
+            z-index: 2000; justify-content: center; align-items: center; backdrop-filter: blur(5px);
+        }
+        .modal-box {
+            width: 80%; max-width: 900px; background: #000; border: 1px solid var(--border);
+            border-radius: 12px; padding: 20px; text-align: center; position: relative;
+            box-shadow: 0 0 50px rgba(0, 243, 255, 0.2);
+        }
+        video { width: 100%; border-radius: 8px; }
+    </style>
+</head>
+<body onclick="initAudio()">
+
+    <audio id="bgm" loop> <source src="sounds/bg_ambience.mp3" type="audio/mpeg"> </audio>
+    <audio id="sfx-hover"> <source src="sounds/ui_hover.wav" type="audio/wav"> </audio>
+    <audio id="sfx-select"> <source src="sounds/ui_select.wav" type="audio/wav"> </audio>
+    <audio id="sfx-start"> <source src="sounds/ui_start.wav" type="audio/wav"> </audio>
+
+    <nav class="sidebar">
+        <div class="menu-item active">
+            <div class="icon-box"><i class="fa-solid fa-shapes"></i></div><span class="menu-text">SHAPE</span>
+        </div>
+        <div class="menu-item" onclick="alert('กรุณาโหลดไฟล์ page_setup.html')">
+            <div class="icon-box"><i class="fa-solid fa-gear"></i></div><span class="menu-text">SETUP</span>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <div class="header-title"><i class="fa-solid fa-shapes"></i> MEASURE CYCLE</div>
+
+        <div id="view-grid">
+            <div class="tech-card box-main" onclick="openFlow('6pc')" onmouseenter="playSfx('hover')">
+                <img src="images/6pc.png">
+            </div>
+            <div style="display:flex; flex-direction:column; gap:20px;">
+                <div class="tech-card box-sub" onclick="openFlow('mock1')" onmouseenter="playSfx('hover')">
+                    <img src="images/4pcon.png">
+                </div>
+                <div class="tech-card box-sub" onclick="openFlow('mock2')" onmouseenter="playSfx('hover')">
+                    <img src="images/6pc.png">
+                </div>
+            </div>
+            <div class="bottom-row">
+                <div class="tech-card" onclick="openFlow('4pcon')" onmouseenter="playSfx('hover')"><img src="images/4pcon.png"></div>
+                <div class="tech-card" onclick="openFlow('C')" onmouseenter="playSfx('hover')"><h1>C</h1></div>
+                <div class="tech-card" onclick="openFlow('D')" onmouseenter="playSfx('hover')"><h1>D</h1></div>
+            </div>
+        </div>
+
+        <div id="view-flow">
+            <button class="back-btn" onclick="closeFlow(); playSfx('select')" onmouseenter="playSfx('hover')"><i class="fa-solid fa-chevron-left"></i> BACK</button>
+            <svg id="connection-layer"></svg>
+
+            <div id="box-selected"><img id="img-selected" src=""></div>
+
+            <div class="input-option" id="opt-joy" onclick="selectInput('joy'); playSfx('select')" onmouseenter="playSfx('hover')">
+                <img src="images/joyv3.png">
+            </div>
+            <div class="input-option" id="opt-cam" onclick="selectInput('cam'); playSfx('select')" onmouseenter="playSfx('hover')">
+                <img src="images/camerav3.png">
+            </div>
+
+            <div id="lbl-ctrl">Ctrl</div>
+
+            <div id="btn-start" onclick="clickStart()" onmouseenter="playSfx('hover')">
+                <img id="btn-start-img" src="">
+                <div id="btn-start-text">START <i class="fa-solid fa-bolt"></i></div>
+            </div>
+
+            <div id="btn-tutorial" onclick="clickPreview()" onmouseenter="playSfx('hover')">
+                <i class="fa-solid fa-play"></i> ดูวิดีโอการใช้งาน
+            </div>
+        </div>
+    </main>
+
+    <div id="modal-overlay">
+        <div class="modal-box">
+            <button style="position:absolute; right:10px; top:-30px; background:none; border:none; color:white; font-size:24px; cursor:pointer;" onclick="closeModal()">X</button>
+            <video id="v-player" controls><source src="" type="video/mp4"></video>
+            <p style="margin-top:10px; color:#888;">[ PREVIEW MODE ]</p>
+        </div>
+    </div>
+
+    <script>
+        // --- DATA ---
+        const shapeData = {
+            '6pc': {
+                img: 'images/6pc.png',
+                video_joy: '6p_joy_start.mp4', img_start_joy: 'images/6p_joy_start.png', cmd_joy: 'run_6p_joy',
+                video_cam: '6p_cam_start.mp4', img_start_cam: 'images/6p_cam_start.png', cmd_cam: 'run_6p_cam'
+            },
+            '4pcon': {
+                img: 'images/4pcon.png',
+                video_joy: '4p_joy.mp4', img_start_joy: 'images/4pjoy.png', cmd_joy: 'run_4p_joy',
+                video_cam: '4p_cam.mp4', img_start_cam: 'images/4pcam.png', cmd_cam: 'run_4p_cam'
+            },
+            'mock1': { img: 'images/4pcon.png', video_joy: '', img_start_joy: '', cmd_joy: '', video_cam: '', img_start_cam: '', cmd_cam: '' },
+            'mock2': { img: 'images/6pc.png', video_joy: '', img_start_joy: '', cmd_joy: '', video_cam: '', img_start_cam: '', cmd_cam: '' }
+        };
+
+        let currentShape = null;
+        let currentTool = null;
+        let audioInitStatus = false;
+
+        // --- AUDIO ---
+        function initAudio() {
+            if(!audioInitStatus) {
+                document.getElementById('bgm').volume = 0.2;
+                document.getElementById('bgm').play().catch(()=>{});
+                audioInitStatus = true;
+            }
+        }
+        function playSfx(id) {
+            let s = document.getElementById('sfx-' + id);
+            if(s) { s.currentTime=0; s.volume=0.5; s.play().catch(()=>{}); }
+        }
+
+        // --- FLOW CONTROLLER ---
+        function openFlow(key) {
+            if(!shapeData[key]) return;
+            currentShape = key;
+            document.getElementById('view-grid').style.display = 'none';
+            document.getElementById('view-flow').style.display = 'block';
+            document.getElementById('img-selected').src = shapeData[key].img;
+            resetFlow();
+        }
+
+        function closeFlow() {
+            document.getElementById('view-flow').style.display = 'none';
+            document.getElementById('view-grid').style.display = 'grid';
+            resetFlow();
+            currentShape = null;
+        }
+
+        function resetFlow() {
+            currentTool = null;
+            document.querySelectorAll('.input-option').forEach(e => e.classList.remove('selected'));
+            document.getElementById('connection-layer').innerHTML = '';
+            
+            const btn = document.getElementById('btn-start');
+            btn.classList.remove('ready', 'armed');
+            document.getElementById('btn-start-img').src = '';
+            
+            document.getElementById('lbl-ctrl').classList.remove('visible');
+            document.getElementById('btn-tutorial').classList.remove('visible');
+        }
+
+        function selectInput(tool) {
+            if(!currentShape) return;
+            currentTool = tool;
+
+            // Update UI Selected
+            document.querySelectorAll('.input-option').forEach(e => e.classList.remove('selected'));
+            const elInput = document.getElementById('opt-' + tool);
+            elInput.classList.add('selected');
+
+            // Update Start Button
+            const data = shapeData[currentShape];
+            const startImg = (tool === 'joy') ? data.img_start_joy : data.img_start_cam;
+            const btn = document.getElementById('btn-start');
+            document.getElementById('btn-start-img').src = startImg;
+            btn.classList.add('ready');
+
+            // Show Hidden Elements
+            document.getElementById('lbl-ctrl').classList.add('visible');
+            document.getElementById('btn-tutorial').classList.add('visible');
+
+            // Draw Lines
+            drawLines(elInput);
+        }
+
+        // --- DRAW LINES (Logic คำนวณตำแหน่ง) ---
+        function drawLines(elInput) {
+            const svg = document.getElementById('connection-layer');
+            svg.innerHTML = ''; // Clear old
+
+            // 1. หาตำแหน่ง Center ของกล่องต่างๆ
+            const getCenter = (id) => {
+                const el = document.getElementById(id);
+                return { x: el.offsetLeft + el.offsetWidth/2, y: el.offsetTop + el.offsetHeight/2 };
+            };
+
+            const pSelected = getCenter('box-selected');
+            const pInput = getCenter(elInput.id);
+            const pStart = getCenter('btn-start');
+
+            // 2. คำนวณตำแหน่งป้าย Ctrl ให้อยู่กลางเส้น Input -> Start
+            const lblCtrl = document.getElementById('lbl-ctrl');
+            const midX = (pInput.x + pStart.x) / 2;
+            const midY = (pInput.y + pStart.y) / 2;
+            lblCtrl.style.left = (midX - lblCtrl.offsetWidth/2) + 'px';
+            lblCtrl.style.top = (midY - lblCtrl.offsetHeight/2) + 'px';
+
+            // 3. วาดเส้น 1: Selected -> Input (เส้นโค้ง)
+            createPath(svg, pSelected, pInput);
+
+            // 4. วาดเส้น 2: Input -> Start (เส้นตรงผ่าน Ctrl)
+            const pathStr = `M ${pInput.x} ${pInput.y} L ${pStart.x} ${pStart.y}`;
+            createCustomPath(svg, pathStr);
+
+            // 5. วาดเส้น 3: Input -> Tutorial (เส้นโค้งลงล่าง)
+            const elTut = document.getElementById('btn-tutorial');
+            const pInputBot = { x: pInput.x, y: document.getElementById(elInput.id).offsetTop + document.getElementById(elInput.id).offsetHeight };
+            const pTutLeft = { x: elTut.offsetLeft, y: elTut.offsetTop + elTut.offsetHeight/2 };
+            
+            const dTut = `M ${pInputBot.x} ${pInputBot.y} C ${pInputBot.x} ${pInputBot.y+50}, ${pTutLeft.x-50} ${pTutLeft.y}, ${pTutLeft.x} ${pTutLeft.y}`;
+            createCustomPath(svg, dTut);
+        }
+
+        function createPath(svg, p1, p2) {
+            const midX = (p1.x + p2.x) / 2;
+            const d = `M ${p1.x} ${p1.y} C ${midX} ${p1.y}, ${midX} ${p2.y}, ${p2.x} ${p2.y}`;
+            createCustomPath(svg, d);
+        }
+
+        function createCustomPath(svg, d) {
+            const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+            path.setAttribute("d", d); path.setAttribute("class", "flow-line");
+            svg.appendChild(path);
+            requestAnimationFrame(()=>path.classList.add('visible'));
+        }
+
+        // --- CTRL & EXECUTE ---
+        document.addEventListener('keydown', (e)=>{
+            if(e.key === 'Control') {
+                const btn = document.getElementById('btn-start');
+                if(btn.classList.contains('ready')) {
+                    btn.classList.add('armed');
+                    document.getElementById('btn-start-text').innerHTML = 'EXECUTE <i class="fa-solid fa-rocket"></i>';
+                }
+            }
+        });
+        document.addEventListener('keyup', (e)=>{
+            if(e.key === 'Control') {
+                const btn = document.getElementById('btn-start');
+                btn.classList.remove('armed');
+                document.getElementById('btn-start-text').innerHTML = 'START <i class="fa-solid fa-bolt"></i>';
+            }
+        });
+
+        function clickStart() {
+            const btn = document.getElementById('btn-start');
+            if(!btn.classList.contains('armed')) return;
+            
+            playSfx('start');
+            const data = shapeData[currentShape];
+            const cmd = (currentTool==='joy') ? data.cmd_joy : data.cmd_cam;
+
+            // ส่งคำสั่งไป AHK
+            if(window.ahk && window.ahk.global) window.ahk.global.CNC_Execute(cmd);
+            else console.log("Execute: " + cmd);
+
+            // Flash Screen
+            const f = document.createElement('div');
+            f.style.position='fixed'; f.style.inset=0; f.style.background='white'; f.style.zIndex=9999;
+            document.body.appendChild(f);
+            f.animate([{opacity:1},{opacity:0}],{duration:200}).onfinish=()=>f.remove();
+        }
+
+        function clickPreview() {
+            const data = shapeData[currentShape];
+            const v = (currentTool==='joy') ? data.video_joy : data.video_cam;
+            playSfx('select');
+            document.getElementById('modal-overlay').style.display='flex';
+            const p = document.getElementById('v-player');
+            p.src = v; p.play();
+        }
+        function closeModal() {
+            document.getElementById('modal-overlay').style.display='none';
+            document.getElementById('v-player').pause();
+        }
+    </script>
+</body>
+</html>

@@ -24,7 +24,7 @@
 
         body {
             margin: 0; padding: 0;
-            width: 100vw; height: 100vh; /* ปรับเป็นเต็มหน้าจอเสมอ */
+            width: 100vw; height: 100vh;
             background-color: var(--bg-deep);
             background-image: radial-gradient(#1a1a1a 1px, transparent 1px);
             background-size: 30px 30px;
@@ -38,7 +38,7 @@
            2. SIDEBAR (Desktop Default)
            ========================================= */
         .sidebar {
-            width: 380px;
+            width: 400px;
             height: 100%;
             background-color: #000;
             display: flex; flex-direction: column;
@@ -47,18 +47,14 @@
             z-index: 100;
             box-shadow: 20px 0 50px rgba(0,0,0,0.9);
             transition: transform 0.4s ease;
-            flex-shrink: 0; /* ไม่ให้หดตัว */
         }
 
-        /* CENTER MENU */
         .menu-group {
             flex: 1; 
             display: flex; flex-direction: column; 
             justify-content: center; gap: 20px;
-            overflow-y: auto; /* เผื่อหน้าจอเตี้ย */
         }
 
-        /* BOTTOM CONTROLS */
         .bottom-controls {
             margin-top: 15px;
             padding-top: 15px;
@@ -66,10 +62,9 @@
             display: flex; flex-direction: column;
             gap: 12px;
             align-items: center;
-            flex-shrink: 0;
         }
 
-        /* Music & Sound Panels */
+        /* Music Selector */
         .music-panel { display: flex; gap: 8px; width: 100%; justify-content: center; }
         .music-btn {
             flex: 1;
@@ -86,28 +81,33 @@
             box-shadow: 0 0 10px var(--c-gold);
         }
 
+        /* Sound Control */
         .sound-panel {
             display: flex; align-items: center; gap: 15px;
-            color: #888; background: #111; padding: 8px 20px;
-            border-radius: 30px; width: 100%; justify-content: center; box-sizing: border-box;
+            color: #888; background: #111;
+            padding: 8px 20px; border-radius: 30px;
+            width: 100%; justify-content: center; box-sizing: border-box;
         }
         #mute-btn { font-size: 20px; cursor: pointer; transition: 0.3s; width: 24px; text-align: center; }
         #mute-btn:hover, #mute-btn.active { color: var(--c-blue); text-shadow: 0 0 10px var(--c-blue); }
         .vol-levels { display: flex; gap: 5px; }
         .vol-btn {
             font-family: 'Rajdhani'; font-weight: bold; font-size: 14px;
-            background: #222; color: #666; padding: 2px 8px; border-radius: 6px;
+            background: #222; color: #666;
+            padding: 2px 8px; border-radius: 6px;
             cursor: pointer; transition: 0.3s; border: 1px solid #333;
         }
         .vol-btn:hover { background: #333; color: white; }
         .vol-btn.active { background: var(--c-blue); color: black; border-color: var(--c-blue); }
 
+        /* Language Switch */
         .lang-switch {
-            font-family: 'Prompt', sans-serif; font-weight: 700; font-size: 16px; color: #888; 
-            cursor: pointer; transition: 0.3s; display: flex; gap: 8px; align-items: center;
+            font-family: 'Prompt', sans-serif; 
+            font-weight: 700; font-size: 16px; color: #888; 
+            cursor: pointer; transition: 0.3s;
+            display: flex; gap: 8px; align-items: center;
         }
         .lang-switch:hover { color: white; transform: scale(1.05); }
-
 
         /* MAIN BUTTONS */
         .main-btn {
@@ -117,7 +117,6 @@
             font-weight: 700; transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
             box-shadow: 0 10px 20px rgba(0,0,0,0.5);
             text-align: center; line-height: 1.2;
-            flex-shrink: 0;
         }
         .main-btn:hover { transform: scale(1.05) translateY(-5px); background-color: #1a1d24; }
         .main-btn:active { transform: scale(0.95); }
@@ -128,30 +127,93 @@
         .btn-red:hover { opacity: 1; }
         .btn-purple { height: 120px; font-size: 32px; color: var(--c-purple); text-shadow: 0 0 20px rgba(189, 0, 255, 0.4); border-bottom: 4px solid rgba(189, 0, 255, 0.1); }
 
-        /* CONTENT & PRO MODE */
-        .main-content { flex: 1; position: relative; overflow: hidden; width: 100%; }
+        /* =========================================
+           PRO MODE LAYOUT (FIXED)
+           ========================================= */
+        #pro-mode-container {
+            display: none; /* เริ่มต้นซ่อนไว้ */
+            opacity: 0; 
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            z-index: 2000; background: radial-gradient(circle at center, #111 0%, #000 100%);
+            padding-top: 140px;
+            padding-bottom: 40px;
+            box-sizing: border-box;
+            flex-direction: row; /* Default Desktop */
+        }
+
+        .pro-left-group {
+            width: 50%;
+            display: flex; flex-direction: column; justify-content: center; 
+            gap: 40px; padding: 20px 60px;
+            border-right: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .pro-right-group {
+            width: 50%;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: 1fr 1fr;
+            gap: 40px; padding: 20px 60px;
+            align-content: center;
+        }
+
+        .cmd-btn {
+            background: transparent; border: none; position: relative; 
+            display: flex; justify-content: center; align-items: center;
+            transition: transform 0.2s ease-out; cursor: not-allowed;
+            width: 100%;
+        }
+
+        .big-btn { height: 60%; max-height: 380px; }
+        .small-btn { height: 60%; max-height: 240px; aspect-ratio: 1/1; justify-self: center; }
+
+        .cmd-btn-img {
+            width: 100%; height: 100%; background-size: contain; background-repeat: no-repeat; background-position: center;
+            transition: 0.2s; opacity: 0.4; filter: grayscale(100%); 
+        }
+        .cmd-btn.unlocked { cursor: pointer; }
+        .cmd-btn.unlocked .cmd-btn-img { opacity: 0.8; filter: grayscale(100%) drop-shadow(0 0 10px var(--c-green)); }
+        .cmd-btn.unlocked:hover { transform: scale(1.5); z-index: 100; }
+        .cmd-btn.unlocked:hover .cmd-btn-img { opacity: 1; filter: drop-shadow(0 0 30px var(--c-blue)) brightness(1.3); }
+        .cmd-btn.unlocked:active { transform: scale(1.05); transition: transform 0.05s; }
+        .cmd-btn.unlocked:active .cmd-btn-img { filter: none; opacity: 1; }
+
+        /* FOOTER STATUS */
+        .footer-status {
+            position: absolute; bottom: 20px; right: 30px;
+            display: flex; align-items: center; gap: 12px;
+            z-index: 50; pointer-events: none;
+        }
+        .status-dot {
+            width: 8px; height: 8px; 
+            background-color: #00ff66; 
+            border-radius: 50%; box-shadow: 0 0 8px #00ff66;
+        }
+        .footer-text {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 16px; font-weight: 600;
+            color: rgba(255, 255, 255, 0.6);
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+            letter-spacing: 1px;
+        }
+        .footer-logo { height: 35px; width: auto; opacity: 0.9; }
+
+        /* Main Content */
+        .main-content { flex: 1; position: relative; overflow: hidden; }
         .fade-element { opacity: 1; transition: opacity 0.4s ease; }
         #viewer-container { width: 100%; height: 100%; }
         iframe { width: 100%; height: 100%; border: none; }
 
-        /* PRO MODE OVERLAY */
-        #pro-mode-container {
-            display: none; opacity: 0; 
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            z-index: 2000; background: radial-gradient(circle at center, #111 0%, #000 100%);
-            overflow-y: auto; /* Allow scroll on small screens */
-        }
-
+        /* UI Controls */
         .back-btn {
             position: absolute; top: 30px; left: 40px;
             font-size: 20px; color: #666; font-weight: bold;
             cursor: pointer; display: flex; align-items: center; gap: 10px;
             padding: 10px 20px; border-radius: 30px; border: 2px solid #333;
-            transition: 0.3s; z-index: 3000; background: rgba(0,0,0,0.5);
+            transition: 0.3s; z-index: 3000;
         }
         .back-btn:hover { color: white; border-color: white; background: rgba(255,255,255,0.1); }
 
-        @keyframes pulse-text { 0% { opacity: 0.5; } 50% { opacity: 1; } 100% { opacity: 0.5; } }
         #status-bar {
             position: absolute; bottom: 30px; left: 40px;
             font-size: 16px; font-weight: 600; letter-spacing: 1px;
@@ -160,90 +222,62 @@
             z-index: 50; pointer-events: none;
         }
         #status-bar.active { color: var(--c-green); opacity: 1; text-shadow: 0 0 10px var(--c-green); animation: none; }
-
-        .grid-wrapper { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 40px; width: 90%; max-width: 1100px; height: 100%; margin: 0 auto; align-content: center; }
-        .col-group { display: flex; flex-direction: column; gap: 40px; justify-content: center; }
-
-        .cmd-btn {
-            background: transparent; border: none; position: relative; 
-            display: flex; justify-content: center; align-items: center;
-            transition: transform 0.2s ease-out; cursor: not-allowed;
-            height: 220px; width: 100%;
-        }
-        .cmd-btn-img {
-            width: 100%; height: 100%; background-size: contain; background-repeat: no-repeat; background-position: center;
-            transition: 0.2s; opacity: 0.4; filter: grayscale(100%); 
-        }
-        .cmd-btn.unlocked { cursor: pointer; }
-        .cmd-btn.unlocked .cmd-btn-img { opacity: 0.8; filter: grayscale(100%) drop-shadow(0 0 10px var(--c-green)); }
-        .cmd-btn.unlocked:hover { transform: scale(1.1); z-index: 100; } /* Reduced scale for mobile safety */
-        .cmd-btn.unlocked:active { transform: scale(0.95); }
-        .cmd-btn.unlocked:active .cmd-btn-img { filter: none; opacity: 1; }
-        
-        .footer-status {
-            position: absolute; bottom: 20px; right: 30px;
-            display: flex; align-items: center; gap: 12px;
-            z-index: 50; pointer-events: none;
-        }
-        .status-dot { width: 8px; height: 8px; background-color: #00ff66; border-radius: 50%; box-shadow: 0 0 8px #00ff66; }
-        .footer-text {
-            font-family: 'Rajdhani', sans-serif; font-size: 16px; font-weight: 600;
-            color: rgba(255, 255, 255, 0.6); text-shadow: 0 0 10px rgba(255, 255, 255, 0.2); letter-spacing: 1px;
-        }
-        .footer-logo { height: 35px; width: auto; opacity: 0.9; }
-
-        /* MOBILE LOCK TOGGLE (Hidden on desktop) */
-        #mobile-lock-toggle {
-            display: none;
-            position: absolute; bottom: 100px; right: 30px;
-            width: 60px; height: 60px; border-radius: 50%;
-            background: #222; border: 2px solid #444; color: #666;
-            z-index: 3000; justify-content: center; align-items: center;
-            font-size: 24px; cursor: pointer; box-shadow: 0 5px 15px rgba(0,0,0,0.5);
-            transition: 0.3s;
-        }
-        #mobile-lock-toggle.unlocked {
-            background: var(--c-green); color: #000; border-color: #fff;
-            box-shadow: 0 0 20px var(--c-green);
-        }
+        @keyframes pulse-text { 0% { opacity: 0.5; } 50% { opacity: 1; } 100% { opacity: 0.5; } }
 
         /* =========================================
-           3. RESPONSIVE / MOBILE STYLES
+           MOBILE RESPONSIVE (MEDIA QUERY)
            ========================================= */
         @media screen and (max-width: 900px) {
-            body { flex-direction: column-reverse; /* Menu bottom, Viewer top */ }
+            body { flex-direction: column; } /* เรียงบนลงล่าง */
             
+            /* Sidebar ย้ายมาล่าง */
             .sidebar { 
-                width: 100%; height: 50vh; /* Half screen for controls */
+                width: 100%; height: auto; 
+                flex-direction: row; 
                 padding: 15px; 
+                order: 2; /* ให้แสดงทีหลัง (ล่างสุด) */
+                overflow-x: auto;
                 box-shadow: 0 -10px 30px rgba(0,0,0,0.8);
             }
             
-            .main-content { height: 50vh; /* Half screen for viewer */ }
-            
-            .btn-green, .btn-blue, .btn-purple { height: 80px; font-size: 24px; }
-            .btn-red { height: 60px; font-size: 18px; }
-            
-            .menu-group { gap: 10px; }
-            .bottom-controls { display: none; /* Hide complex controls on mobile to save space, or keep simple */ }
-            
-            /* Pro Mode Mobile Adjustment */
-            .grid-wrapper { 
-                grid-template-columns: 1fr; /* Stack vertically */
-                gap: 10px; padding-top: 80px; padding-bottom: 50px;
-                height: auto; overflow-y: auto; display: flex; flex-direction: column;
+            .menu-group { 
+                flex-direction: row; gap: 10px; flex: 2;
+                overflow-x: auto;
             }
-            .cmd-btn { height: 150px; }
             
-            .back-btn { top: 15px; left: 15px; font-size: 14px; padding: 8px 15px; }
+            .main-btn {
+                height: 60px; font-size: 16px; width: 120px; min-width: 120px;
+                line-height: 1.1;
+            }
             
-            /* Hide Desktop Status Bar on Mobile */
-            #status-bar { display: none; }
+            .bottom-controls {
+                flex-direction: row; border-top: none; margin-top: 0; padding-top: 0; 
+                padding-left: 15px; border-left: 1px solid #333;
+                flex: 1; min-width: 250px;
+            }
             
-            /* Show Mobile Lock Toggle */
-            #mobile-lock-toggle { display: flex; }
+            .main-content { order: 1; height: 60vh; }
             
-            .footer-status { display: none; /* Hide footer on mobile */ }
+            /* Pro Mode Mobile: เรียงแนวตั้ง */
+            #pro-mode-container {
+                flex-direction: column; padding: 20px;
+                padding-top: 80px; /* หลบปุ่ม Back */
+                overflow-y: auto;
+            }
+            .pro-left-group {
+                width: 100%; height: auto;
+                border-right: none; border-bottom: 1px solid rgba(255,255,255,0.1);
+                padding: 20px 0; flex-direction: row; gap: 10px;
+            }
+            .pro-right-group {
+                width: 100%; height: auto;
+                padding: 20px 0; gap: 10px;
+            }
+            .big-btn { height: 150px; }
+            .small-btn { max-height: 150px; }
+
+            .footer-status { top: 10px; right: 10px; bottom: auto; }
+            .footer-text { display: none; } /* ซ่อนข้อความในมือถือให้เหลือแต่โลโก้ */
         }
 
     </style>
@@ -253,14 +287,16 @@
     <audio id="bgm" loop autoplay> <source src="sounds/focus.mp3" type="audio/mpeg"> </audio>
 
     <div class="sidebar" id="main-sidebar">
+        
         <div class="menu-group">
             <button class="main-btn btn-green" onmouseenter="playSfx('hover')" onclick="playSfx('select'); window.location.href='page_Starter.html'"><span data-lang="starter">โหมดผู้เริ่มต้น</span></button>
             <button class="main-btn btn-blue" onmouseenter="playSfx('hover')" onclick="toggleProMode()"><span data-lang="pro">โหมดมืออาชีพ</span></button>
-            <button class="main-btn btn-red" onmouseenter="playSfx('hover')" onclick="playSfx('select'); alert('Setup Mode')"><span data-lang="setup">โหมดตั้งค่า</span></button>
+            <button class="main-btn btn-red" onmouseenter="playSfx('hover')" onclick="playSfx('select'); window.location.href='setting_cnc.html'"><span data-lang="setup">โหมดตั้งค่า</span></button>
             <button class="main-btn btn-purple" onmouseenter="playSfx('hover')" onclick="runToolMeasure()"><span data-lang="measure">วัดความยาว<br>เครื่องมือ</span></button>
         </div>
 
         <div class="bottom-controls">
+            
             <div class="music-panel">
                 <div class="music-btn active" onclick="changeTrack('focus', this)">FOCUS</div>
                 <div class="music-btn" onclick="changeTrack('war', this)">WAR</div>
@@ -280,6 +316,7 @@
                 <i class="fa-solid fa-globe"></i> <span id="lang-text">TH / ENG</span>
             </div>
         </div>
+
     </div>
 
     <div class="main-content" id="viewer-area">
@@ -291,35 +328,37 @@
     </div>
 
     <div id="pro-mode-container" class="fade-element">
+        
         <div class="back-btn" onclick="toggleProMode()">
             <i class="fa-solid fa-arrow-left"></i> <span data-lang="back">BACK / กลับเมนูหลัก</span>
         </div>
-        
         <div id="status-bar"><i class="fa-solid fa-triangle-exclamation"></i> <span data-lang="status_idle">HOLD [CTRL] TO UNLOCK</span></div>
         
-        <div id="mobile-lock-toggle" onclick="toggleMobileLock()">
-            <i class="fa-solid fa-lock" id="lock-icon"></i>
+        <div class="pro-left-group">
+            <div class="cmd-btn big-btn" data-cmd="run_6p_joy">
+                <div class="cmd-btn-img" style="background-image: url('images/6p_joy_start.png');"></div>
+            </div>
+            <div class="cmd-btn big-btn" data-cmd="run_6p_cam">
+                <div class="cmd-btn-img" style="background-image: url('images/6p_cam_start.png');"></div>
+            </div>
         </div>
 
-        <div class="grid-wrapper">
-            <div class="col-group">
-                <div class="cmd-btn" data-cmd="run_6p_joy"><div class="cmd-btn-img" style="background-image: url('images/6p_joy_start.png');"></div></div>
-                <div class="cmd-btn" data-cmd="run_6p_cam"><div class="cmd-btn-img" style="background-image: url('images/6p_cam_start.png');"></div></div>
+        <div class="pro-right-group">
+            <div class="cmd-btn small-btn" data-cmd="run_4p_joy">
+                <div class="cmd-btn-img" style="background-image: url('images/4p_joy_start.png');"></div>
             </div>
-            <div class="col-group">
-                <div class="cmd-btn" data-cmd="run_4p_joy"><div class="cmd-btn-img" style="background-image: url('images/4p_joy_start.png');"></div></div>
-                <div class="cmd-btn" data-cmd="run_4p_cam"><div class="cmd-btn-img" style="background-image: url('images/4p_cam_start.png');"></div></div>
+            <div class="cmd-btn small-btn" data-cmd="run_3p_cam">
+                <div class="cmd-btn-img" style="background-image: url('images/3p_cam_start.png');"></div>
             </div>
-            <div class="col-group">
-                <div class="cmd-btn" data-cmd="run_3p_joy"><div class="cmd-btn-img" style="background-image: url('images/3p_joy_start.png');"></div></div>
-                <div class="cmd-btn" data-cmd="run_3p_cam"><div class="cmd-btn-img" style="background-image: url('images/3p_cam_start.png');"></div></div>
+            
+            <div class="cmd-btn small-btn" data-cmd="run_3p_joy">
+                <div class="cmd-btn-img" style="background-image: url('images/3p_joy_start.png');"></div>
+            </div>
+            <div class="cmd-btn small-btn" data-cmd="run_4p_cam">
+                <div class="cmd-btn-img" style="background-image: url('images/4p_cam_start.png');"></div>
             </div>
         </div>
     </div>
-
-    <audio id="sfx-hover" preload="auto"> <source src="sounds/ui_hover.wav" type="audio/wav"> </audio>
-    <audio id="sfx-select" preload="auto"> <source src="sounds/ui_select.wav" type="audio/wav"> </audio>
-    <audio id="sfx-start" preload="auto"> <source src="sounds/ui_start.wav" type="audio/wav"> </audio>
 
     <div class="footer-status">
         <div class="status-dot"></div>
@@ -327,18 +366,22 @@
         <img src="images/oologo.png" alt="OO Logo" class="footer-logo">
     </div>
 
+    <audio id="sfx-hover" preload="auto"> <source src="sounds/ui_hover.wav" type="audio/wav"> </audio>
+    <audio id="sfx-select" preload="auto"> <source src="sounds/ui_select.wav" type="audio/wav"> </audio>
+    <audio id="sfx-start" preload="auto"> <source src="sounds/ui_start.wav" type="audio/wav"> </audio>
+
     <script>
         // --- TRANSLATIONS ---
         const translations = {
             th: { 
                 starter: "โหมดผู้เริ่มต้น", pro: "โหมดมืออาชีพ", setup: "ตั้งค่า", measure: "วัดความยาว\nเครื่องมือ",
                 status_idle: "กด [CTRL] ค้างไว้เพื่อปลดล็อค", status_armed: "พร้อมใช้งาน",
-                back: "BACK / กลับเมนูหลัก", lang_text: "TH / ENG เปลี่ยนภาษา"
+                back: "BACK / กลับเมนูหลัก", lang_text: "TH / ENG"
             },
             en: { 
                 starter: "STARTER MODE", pro: "PRO MODE", setup: "SETUP", measure: "MEASURE\nTOOL LENGTH",
                 status_idle: "HOLD [CTRL] TO UNLOCK", status_armed: "SYSTEM READY",
-                back: "BACK / MAIN MENU", lang_text: "TH / ENG CHANGE LANGUAGE"
+                back: "BACK / MAIN MENU", lang_text: "TH / ENG"
             }
         };
         let currentLang = 'th';
@@ -393,10 +436,11 @@
         function toggleProMode() {
             playSfx('select');
             const p = document.getElementById('pro-mode-container');
-            if(p.style.display === 'block') {
+            // เช็ค flex แทน block เพื่อให้ layout ถูกต้อง
+            if(p.style.display === 'flex') {
                 p.style.opacity = 0; setTimeout(() => { p.style.display = 'none'; }, 300);
             } else {
-                p.style.display = 'block'; requestAnimationFrame(() => { p.style.opacity = 1; });
+                p.style.display = 'flex'; requestAnimationFrame(() => { p.style.opacity = 1; });
             }
         }
 
@@ -412,71 +456,36 @@
             if(s){ s.currentTime=0; s.volume=(id==='hover'?0.4:1.0); s.play().catch(()=>{}); }
         }
 
-        // --- UNLOCK LOGIC (CTRL & MOBILE TOGGLE) ---
-        let isUnlocked = false;
+        // --- CTRL LOGIC ---
+        let isCtrl = false;
         const btns = document.querySelectorAll('.cmd-btn');
         const statusBar = document.getElementById('status-bar');
         const statusTextEl = document.querySelector('[data-lang="status_idle"]');
-        
-        // Mobile Toggle Logic
-        function toggleMobileLock() {
-            isUnlocked = !isUnlocked;
-            const toggleBtn = document.getElementById('mobile-lock-toggle');
-            const lockIcon = document.getElementById('lock-icon');
-            
-            if(isUnlocked) {
-                toggleBtn.classList.add('unlocked');
-                lockIcon.classList.remove('fa-lock');
-                lockIcon.classList.add('fa-lock-open');
-                setUnlockedState(true);
-                playSfx('start'); // Sound feedback
-            } else {
-                toggleBtn.classList.remove('unlocked');
-                lockIcon.classList.remove('fa-lock-open');
-                lockIcon.classList.add('fa-lock');
-                setUnlockedState(false);
-                playSfx('select');
-            }
-        }
 
-        function setUnlockedState(active) {
-            if(active) {
+        document.addEventListener('keydown', e => {
+            if(e.key === 'Control' && !isCtrl) {
+                isCtrl = true;
                 statusTextEl.innerText = translations[currentLang].status_armed;
                 statusBar.classList.add('active'); 
                 btns.forEach(b => b.classList.add('unlocked'));
-            } else {
-                statusTextEl.innerText = translations[currentLang].status_idle;
-                statusBar.classList.remove('active');
-                btns.forEach(b => b.classList.remove('unlocked'));
-            }
-        }
-
-        // Keyboard Logic
-        document.addEventListener('keydown', e => {
-            if(e.key === 'Control' && !isUnlocked) {
-                isUnlocked = true;
-                setUnlockedState(true);
                 playSfx('hover');
             }
         });
         document.addEventListener('keyup', e => {
             if(e.key === 'Control') {
-                isUnlocked = false;
-                setUnlockedState(false);
+                isCtrl = false;
+                statusTextEl.innerText = translations[currentLang].status_idle;
+                statusBar.classList.remove('active');
+                btns.forEach(b => b.classList.remove('unlocked'));
             }
         });
-
-        // Button Action
         btns.forEach(btn => {
-            btn.addEventListener('mouseenter', () => { if(isUnlocked) playSfx('hover'); });
+            btn.addEventListener('mouseenter', () => { if(isCtrl) playSfx('hover'); });
             btn.addEventListener('click', () => {
-                if(isUnlocked) {
+                if(isCtrl) {
                     playSfx('start');
                     if(window.ahk) window.ahk.global.CNC_Execute(btn.getAttribute('data-cmd'));
-                } else { 
-                    playSfx('select'); 
-                    // Optional: Shake animation or visual feedback that it's locked
-                }
+                } else { playSfx('select'); }
             });
         });
     </script>

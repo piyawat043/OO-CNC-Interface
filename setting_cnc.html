@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Setup Mode - Maker Customs</title>
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;700&family=Prompt:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* --- 1. CORE THEME --- */
+        :root {
+            --bg-deep: #050505;
+            --c-blue: #00f3ff;
+            --c-green: #00ff66;
+            --c-red: #ff0044;
+            --c-card: #0f1115;
+            --c-text-gray: #888;
+        }
+
+        body {
+            margin: 0; padding: 0;
+            width: 100vw; height: 100vh;
+            background-color: var(--bg-deep);
+            background-image: radial-gradient(#1a1a1a 1px, transparent 1px);
+            background-size: 30px 30px;
+            font-family: 'Prompt', 'Rajdhani', sans-serif;
+            color: white;
+            overflow: hidden;
+            display: flex; justify-content: center; align-items: center;
+            user-select: none;
+        }
+
+        /* Container หลัก (ขนาดจอเครื่องจักร) */
+        #app-container {
+            width: 1280px; height: 800px;
+            position: relative;
+            background: rgba(15, 17, 21, 0.6); /* โปร่งแสงนิดๆ */
+            box-shadow: 0 0 50px rgba(0,0,0,0.8);
+            border: 1px solid #222;
+            overflow: hidden;
+        }
+
+        /* --- 2. TRANSITIONS --- */
+        .page {
+            position: absolute; top: 0; left: 0;
+            width: 100%; height: 100%;
+            display: flex; flex-direction: column;
+            justify-content: center; align-items: center;
+            opacity: 0; visibility: hidden; pointer-events: none;
+            transition: opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1), transform 0.6s;
+            transform: scale(0.95); /* เอฟเฟกต์ซูมนิดๆ */
+            z-index: 1;
+        }
+
+        .page.active {
+            opacity: 1; visibility: visible; pointer-events: auto;
+            transform: scale(1);
+            z-index: 10;
+        }
+
+        /* --- 3. UI COMPONENTS --- */
+        
+        /* โลโก้กล่อง (Icon Cube) */
+        .logo-cube {
+            font-size: 60px; color: var(--c-blue);
+            margin-bottom: 20px;
+            text-shadow: 0 0 30px var(--c-blue);
+            animation: float 3s ease-in-out infinite;
+        }
+        @keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-10px); } 100% { transform: translateY(0px); } }
+
+        /* หัวข้อหน้าแรก (Setup Mode) */
+        h1.setup-title {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 80px; /* ตัวใหญ่สะใจ */
+            font-weight: 700;
+            margin: 0 0 10px 0;
+            color: var(--c-red); /* สีแดงตามปุ่ม Setup เดิม */
+            text-shadow: 0 0 40px rgba(255, 0, 68, 0.6);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        h2.lang-subtitle {
+            font-size: 24px; color: var(--c-text-gray);
+            margin-bottom: 50px; font-weight: 500;
+        }
+
+        /* ปุ่มเลือกภาษา */
+        .lang-btn-group { display: flex; gap: 40px; }
+
+        .btn-lang {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid #333;
+            border-radius: 12px;
+            padding: 25px 40px;
+            min-width: 280px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex; flex-direction: column; align-items: center; gap: 10px;
+        }
+
+        .btn-lang:hover {
+            background: rgba(255,255,255,0.1);
+            border-color: white;
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        
+        .flag-icon { font-size: 40px; } /* ขนาดธง */
+        
+        .lang-text-main {
+            font-family: 'Prompt'; font-size: 24px; font-weight: bold; color: white;
+        }
+        .lang-text-sub {
+            font-family: 'Rajdhani'; font-size: 18px; color: var(--c-text-gray);
+            text-transform: uppercase; letter-spacing: 1px;
+        }
+
+        /* General Buttons (สำหรับหน้าอื่นๆ) */
+        .btn-action {
+            padding: 15px 40px; border-radius: 50px; border: none;
+            font-family: 'Rajdhani'; font-size: 24px; font-weight: bold;
+            cursor: pointer; transition: 0.3s; margin: 0 15px;
+            min-width: 200px; text-transform: uppercase;
+        }
+        .btn-cyan { background: transparent; border: 2px solid var(--c-blue); color: var(--c-blue); }
+        .btn-cyan:hover { background: var(--c-blue); color: black; box-shadow: 0 0 20px var(--c-blue); }
+        
+        .btn-green { background: var(--c-green); color: black; border: 2px solid var(--c-green); }
+        .btn-green:hover { background: #66ff99; box-shadow: 0 0 20px var(--c-green); }
+
+        /* Video Area */
+        .video-wrapper {
+            width: 100%; height: 100%; position: relative; background: black;
+        }
+        video { width: 100%; height: 100%; object-fit: cover; }
+
+        /* Menu Grid */
+        .menu-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; width: 85%; }
+        .menu-card {
+            height: 300px; background: #111; border: 1px solid #333;
+            border-radius: 20px;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            cursor: pointer; transition: 0.3s; position: relative; overflow: hidden;
+        }
+        .menu-card:hover { border-color: var(--c-blue); background: #161616; transform: translateY(-10px); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .menu-num { font-size: 80px; font-family: 'Rajdhani'; color: #222; position: absolute; top: 10px; right: 20px; font-weight: bold; }
+        .menu-icon { font-size: 50px; color: var(--c-blue); margin-bottom: 20px; z-index: 2; }
+        .menu-label { font-size: 28px; font-weight: bold; z-index: 2; font-family: 'Rajdhani'; letter-spacing: 1px; }
+
+        /* Popup */
+        #popup-overlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.95); z-index: 100;
+            display: none; justify-content: center; align-items: center;
+            backdrop-filter: blur(5px);
+        }
+        .popup-box {
+            width: 900px; background: #0f1115; border: 1px solid #333; padding: 0;
+            border-radius: 15px; overflow: hidden; box-shadow: 0 0 50px rgba(0,243,255,0.1);
+        }
+        .popup-header {
+            padding: 15px 25px; background: #1a1a1a; display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 1px solid #333;
+        }
+        .close-btn { color: var(--c-red); font-size: 24px; cursor: pointer; transition: 0.2s; }
+        .close-btn:hover { transform: scale(1.2); }
+
+    </style>
+</head>
+<body>
+
+    <div id="app-container">
+
+        <div id="page-home" class="page active">
+            <i class="fa-solid fa-cube logo-cube"></i>
+            
+            <h1 class="setup-title">โหมดตั้งค่า</h1>
+            <h2 class="setup-title" style="font-size: 30px; margin-top: -10px; opacity: 0.6; color: white; text-shadow: none;">SETUP MODE</h2>
+            
+            <p class="lang-subtitle">กรุณาเลือกภาษาเพื่อเริ่มต้น / Please select language to start</p>
+            
+            <div class="lang-btn-group">
+                <div class="btn-lang" onclick="selectLang('th')">
+                    <div class="flag-icon">🇹🇭</div>
+                    <div class="lang-text-main">ภาษาไทย</div>
+                    <div class="lang-text-sub">(Thai)</div>
+                </div>
+
+                <div class="btn-lang" onclick="selectLang('en')">
+                    <div class="flag-icon">🇬🇧</div> <div class="lang-text-main">ภาษาอังกฤษ</div>
+                    <div class="lang-text-sub">(ENG)</div>
+                </div>
+            </div>
+        </div>
+
+        <div id="page-decision" class="page">
+            <h1 id="decision-title" style="font-size: 60px; color: white;">WELCOME</h1>
+            <p id="decision-desc" style="font-size: 20px; color: #aaa; margin-bottom: 40px;">Please choose an option</p>
+            
+            <div style="display: flex;">
+                <button class="btn-action btn-cyan" onclick="goInstruction()">
+                    <i class="fa-solid fa-circle-info"></i> <span id="btn-guide">คำแนะนำ</span>
+                </button>
+                <button class="btn-action btn-green" onclick="goMainMenu()">
+                    <i class="fa-solid fa-play"></i> <span id="btn-start">เริ่มทันที</span>
+                </button>
+            </div>
+        </div>
+
+        <div id="page-video" class="page" style="background: black;">
+            <div class="video-wrapper">
+                <video id="intro-video" muted playsinline>
+                    <source src="assets/video_intro.mp4" type="video/mp4">
+                </video>
+                <div style="position: absolute; bottom: 30px; right: 30px; background: rgba(0,0,0,0.7); padding: 10px 20px; border-radius: 5px; color: #aaa; font-family: 'Rajdhani';">
+                    <i class="fa-solid fa-circle-play"></i> Playing Introduction...
+                </div>
+                <button onclick="goMainMenu()" style="position: absolute; top: 30px; right: 30px; background: transparent; color: white; border: 1px solid white; padding: 5px 15px; border-radius: 20px; cursor: pointer; opacity: 0.5;">Skip >></button>
+            </div>
+        </div>
+
+        <div id="page-menu" class="page">
+            <h1 style="font-family: 'Rajdhani'; color: var(--c-blue); margin-bottom: 10px;">TRAINING MENU</h1>
+            <p style="color: #666; margin-bottom: 40px;">Select topic to view tutorial</p>
+            
+            <div class="menu-grid">
+                <div class="menu-card" onclick="openPopup('Probe')">
+                    <span class="menu-num">01</span>
+                    <i class="fa-solid fa-crosshairs menu-icon"></i>
+                    <span class="menu-label">Probe</span>
+                </div>
+                <div class="menu-card" onclick="openPopup('Tool Length')">
+                    <span class="menu-num">02</span>
+                    <i class="fa-solid fa-ruler-vertical menu-icon"></i>
+                    <span class="menu-label">Tool Length</span>
+                </div>
+                <div class="menu-card" onclick="openPopup('Camera')">
+                    <span class="menu-num">03</span>
+                    <i class="fa-solid fa-video menu-icon"></i>
+                    <span class="menu-label">Camera</span>
+                </div>
+            </div>
+        </div>
+
+        <div id="popup-overlay">
+            <div class="popup-box">
+                <div class="popup-header">
+                    <span id="popup-title" style="font-family:'Rajdhani'; font-weight:bold; font-size:20px;">TOPIC</span>
+                    <i class="fa-solid fa-xmark close-btn" onclick="closePopup()"></i>
+                </div>
+                <div id="popup-video-area" style="width: 100%; height: 500px; background: black; display: flex; align-items: center; justify-content: center;">
+                    </div>
+            </div>
+        </div>
+
+    </div>
+
+    <audio id="main-audio"></audio>
+
+    <script>
+        // --- CONFIG & STATE ---
+        const audioPlayer = document.getElementById('main-audio');
+        let currentLang = 'th';
+        let loopCounter = 0;
+
+        const texts = {
+            th: { title: "ยินดีต้อนรับ", desc: "กรุณาเลือกรายการที่ต้องการ", btnGuide: "ดูคำแนะนำ", btnStart: "เริ่มทันที" },
+            en: { title: "WELCOME", desc: "Please select an option", btnGuide: "INSTRUCTION", btnStart: "START NOW" }
+        };
+
+        // --- WORKFLOW FUNCTIONS ---
+
+        // 1. Language Selected
+        function selectLang(lang) {
+            currentLang = lang;
+            
+            // Set Decision Page Text
+            document.getElementById('decision-title').innerText = texts[lang].title;
+            document.getElementById('decision-desc').innerText = texts[lang].desc;
+            document.getElementById('btn-guide').innerText = texts[lang].btnGuide;
+            document.getElementById('btn-start').innerText = texts[lang].btnStart;
+
+            // Transition
+            switchPage('page-decision');
+
+            // Play Audio 1 (Loop 2 times)
+            // ไฟล์เสียง: assets/thai1.mp3 หรือ assets/eng1.mp3
+            setTimeout(() => {
+                const soundFile = (lang === 'th') ? 'assets/thai1.mp3' : 'assets/eng1.mp3';
+                playAudioLoop(soundFile, 2); 
+            }, 600);
+        }
+
+        // 2. Decision Logic
+        function goMainMenu() {
+            stopAudio();
+            switchPage('page-menu');
+            
+            // Play Audio 3 (Once)
+            // ไฟล์เสียง: assets/thai3.mp3 หรือ assets/eng3.mp3
+            setTimeout(() => {
+                const soundFile = (currentLang === 'th') ? 'assets/thai3.mp3' : 'assets/eng3.mp3';
+                playAudioOnce(soundFile);
+            }, 600);
+        }
+
+        function goInstruction() {
+            stopAudio();
+            switchPage('page-video');
+
+            const videoEl = document.getElementById('intro-video');
+            const soundFile = (currentLang === 'th') ? 'assets/thai2.mp3' : 'assets/eng2.mp3';
+
+            setTimeout(() => {
+                videoEl.currentTime = 0;
+                videoEl.play();
+                playAudioOnce(soundFile); // เล่นเสียงคู่กับวีดีโอ
+
+                // เมื่อวีดีโอจบ -> ไป Main Menu
+                videoEl.onended = () => {
+                    goMainMenu();
+                };
+            }, 600);
+        }
+
+        // 3. Popup Logic
+        function openPopup(topic) {
+            document.getElementById('popup-title').innerText = topic.toUpperCase() + " TUTORIAL";
+            const videoArea = document.getElementById('popup-video-area');
+            
+            // ตั้งชื่อไฟล์วีดีโอให้ตรงตามนี้: assets/tutorial_probe.mp4, tutorial_camera.mp4
+            const filename = `assets/tutorial_${topic.toLowerCase().replace(' ','')}.mp4`;
+            
+            videoArea.innerHTML = `<video width="100%" height="100%" controls autoplay src="${filename}"></video>`;
+            document.getElementById('popup-overlay').style.display = 'flex';
+        }
+
+        function closePopup() {
+            document.getElementById('popup-overlay').style.display = 'none';
+            document.getElementById('popup-video-area').innerHTML = '';
+        }
+
+        // --- UTILS ---
+        function switchPage(pageId) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById(pageId).classList.add('active');
+        }
+
+        function stopAudio() {
+            audioPlayer.pause();
+            audioPlayer.currentTime = 0;
+            audioPlayer.onended = null;
+        }
+
+        function playAudioOnce(src) {
+            stopAudio();
+            audioPlayer.src = src;
+            audioPlayer.loop = false;
+            audioPlayer.play().catch(e => console.log("Audio Error:", e));
+        }
+
+        function playAudioLoop(src, maxCount) {
+            stopAudio();
+            audioPlayer.src = src;
+            loopCounter = 0;
+            audioPlayer.play().catch(e => console.log("Audio Error:", e));
+
+            audioPlayer.onended = () => {
+                loopCounter++;
+                if (loopCounter < maxCount) {
+                    audioPlayer.play();
+                }
+            };
+        }
+    </script>
+</body>
+</html>
