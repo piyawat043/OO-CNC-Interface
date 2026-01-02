@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Maker Customs OS - OO CNC Interface</title>
+    <title>Maker Customs OS - OO CNC Interface (Mobile Ready)</title>
     <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;700&family=Prompt:wght@500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -32,6 +32,7 @@
             display: flex;
             overflow: hidden;
             user-select: none;
+            -webkit-tap-highlight-color: transparent; /* ลบสีไฮไลท์เวลาแตะในมือถือ */
         }
 
         /* =========================================
@@ -64,7 +65,7 @@
             align-items: center;
         }
 
-        /* Music Selector */
+        /* Music & Sound Controls */
         .music-panel { display: flex; gap: 8px; width: 100%; justify-content: center; }
         .music-btn {
             flex: 1;
@@ -81,7 +82,6 @@
             box-shadow: 0 0 10px var(--c-gold);
         }
 
-        /* Sound Control */
         .sound-panel {
             display: flex; align-items: center; gap: 15px;
             color: #888; background: #111;
@@ -100,7 +100,6 @@
         .vol-btn:hover { background: #333; color: white; }
         .vol-btn.active { background: var(--c-blue); color: black; border-color: var(--c-blue); }
 
-        /* Language Switch */
         .lang-switch {
             font-family: 'Prompt', sans-serif; 
             font-weight: 700; font-size: 16px; color: #888; 
@@ -117,28 +116,28 @@
             font-weight: 700; transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
             box-shadow: 0 10px 20px rgba(0,0,0,0.5);
             text-align: center; line-height: 1.2;
+            position: relative; overflow: hidden;
         }
-        .main-btn:hover { transform: scale(1.05) translateY(-5px); background-color: #1a1d24; }
+        /* Touch feedback for mobile */
         .main-btn:active { transform: scale(0.95); }
 
         .btn-green { height: 160px; font-size: 40px; color: var(--c-green); text-shadow: 0 0 20px rgba(0,255,102,0.4); border-bottom: 4px solid rgba(0,255,102,0.1); }
         .btn-blue  { height: 120px; font-size: 32px; color: #0088ff; text-shadow: 0 0 20px rgba(0,136,255,0.4); border-bottom: 4px solid rgba(0,136,255,0.1); }
         .btn-red   { height: 90px;  font-size: 24px; color: var(--c-red); text-shadow: 0 0 15px rgba(255,0,68,0.4); opacity: 0.8; }
-        .btn-red:hover { opacity: 1; }
         .btn-purple { height: 120px; font-size: 32px; color: var(--c-purple); text-shadow: 0 0 20px rgba(189, 0, 255, 0.4); border-bottom: 4px solid rgba(189, 0, 255, 0.1); }
 
         /* =========================================
-           PRO MODE LAYOUT (FIXED)
+           PRO MODE LAYOUT
            ========================================= */
         #pro-mode-container {
-            display: none; /* เริ่มต้นซ่อนไว้ */
+            display: none; 
             opacity: 0; 
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
             z-index: 2000; background: radial-gradient(circle at center, #111 0%, #000 100%);
-            padding-top: 140px;
+            padding-top: 100px;
             padding-bottom: 40px;
             box-sizing: border-box;
-            flex-direction: row; /* Default Desktop */
+            flex-direction: row; 
         }
 
         .pro-left-group {
@@ -164,19 +163,19 @@
             width: 100%;
         }
 
-        .big-btn { height: 60%; max-height: 380px; }
-        .small-btn { height: 60%; max-height: 240px; aspect-ratio: 1/1; justify-self: center; }
+        .big-btn { height: 45%; max-height: 380px; }
+        .small-btn { height: 100%; max-height: 240px; aspect-ratio: 1/1; justify-self: center; }
 
         .cmd-btn-img {
             width: 100%; height: 100%; background-size: contain; background-repeat: no-repeat; background-position: center;
             transition: 0.2s; opacity: 0.4; filter: grayscale(100%); 
         }
+        
+        /* Logic Unlocked State */
         .cmd-btn.unlocked { cursor: pointer; }
         .cmd-btn.unlocked .cmd-btn-img { opacity: 0.8; filter: grayscale(100%) drop-shadow(0 0 10px var(--c-green)); }
-        .cmd-btn.unlocked:hover { transform: scale(1.5); z-index: 100; }
-        .cmd-btn.unlocked:hover .cmd-btn-img { opacity: 1; filter: drop-shadow(0 0 30px var(--c-blue)) brightness(1.3); }
-        .cmd-btn.unlocked:active { transform: scale(1.05); transition: transform 0.05s; }
-        .cmd-btn.unlocked:active .cmd-btn-img { filter: none; opacity: 1; }
+        .cmd-btn.unlocked:active { transform: scale(0.95); }
+        .cmd-btn.unlocked:active .cmd-btn-img { filter: none; opacity: 1; brightness(1.5); }
 
         /* FOOTER STATUS */
         .footer-status {
@@ -190,29 +189,26 @@
             border-radius: 50%; box-shadow: 0 0 8px #00ff66;
         }
         .footer-text {
-            font-family: 'Rajdhani', sans-serif;
-            font-size: 16px; font-weight: 600;
-            color: rgba(255, 255, 255, 0.6);
-            text-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
-            letter-spacing: 1px;
+            font-family: 'Rajdhani', sans-serif; font-size: 16px; font-weight: 600;
+            color: rgba(255, 255, 255, 0.6); text-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
         }
         .footer-logo { height: 35px; width: auto; opacity: 0.9; }
 
-        /* Main Content */
+        /* Main Content (Viewer) */
         .main-content { flex: 1; position: relative; overflow: hidden; }
         .fade-element { opacity: 1; transition: opacity 0.4s ease; }
         #viewer-container { width: 100%; height: 100%; }
-        iframe { width: 100%; height: 100%; border: none; }
+        iframe { width: 100%; height: 100%; border: none; pointer-events: auto; }
 
-        /* UI Controls */
+        /* UI Controls Overlay */
         .back-btn {
             position: absolute; top: 30px; left: 40px;
             font-size: 20px; color: #666; font-weight: bold;
             cursor: pointer; display: flex; align-items: center; gap: 10px;
             padding: 10px 20px; border-radius: 30px; border: 2px solid #333;
-            transition: 0.3s; z-index: 3000;
+            transition: 0.3s; z-index: 3000; background: rgba(0,0,0,0.5);
         }
-        .back-btn:hover { color: white; border-color: white; background: rgba(255,255,255,0.1); }
+        .back-btn:active { background: white; color: black; }
 
         #status-bar {
             position: absolute; bottom: 30px; left: 40px;
@@ -224,62 +220,96 @@
         #status-bar.active { color: var(--c-green); opacity: 1; text-shadow: 0 0 10px var(--c-green); animation: none; }
         @keyframes pulse-text { 0% { opacity: 0.5; } 50% { opacity: 1; } 100% { opacity: 0.5; } }
 
+        /* ปุ่ม Lock สำหรับมือถือ */
+        #mobile-lock-btn {
+            display: none; /* ซ่อนใน PC */
+            position: absolute; bottom: 80px; left: 50%; transform: translateX(-50%);
+            width: 80px; height: 80px; border-radius: 50%;
+            background: #222; border: 2px solid #444; color: #666;
+            font-size: 30px; justify-content: center; align-items: center;
+            z-index: 3000; cursor: pointer; box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+        }
+        #mobile-lock-btn.unlocked {
+            background: var(--c-green); color: black; border-color: white;
+            box-shadow: 0 0 30px var(--c-green);
+        }
+
         /* =========================================
            MOBILE RESPONSIVE (MEDIA QUERY)
            ========================================= */
         @media screen and (max-width: 900px) {
-            body { flex-direction: column; } /* เรียงบนลงล่าง */
+            body { flex-direction: column; } /* เรียง Viewer ไว้บน เมนูไว้ล่าง */
             
             /* Sidebar ย้ายมาล่าง */
             .sidebar { 
-                width: 100%; height: auto; 
-                flex-direction: row; 
+                width: 100%; height: auto; min-height: 250px;
+                flex-direction: column; 
                 padding: 15px; 
                 order: 2; /* ให้แสดงทีหลัง (ล่างสุด) */
-                overflow-x: auto;
-                box-shadow: 0 -10px 30px rgba(0,0,0,0.8);
-            }
-            
-            .menu-group { 
-                flex-direction: row; gap: 10px; flex: 2;
-                overflow-x: auto;
-            }
-            
-            .main-btn {
-                height: 60px; font-size: 16px; width: 120px; min-width: 120px;
-                line-height: 1.1;
-            }
-            
-            .bottom-controls {
-                flex-direction: row; border-top: none; margin-top: 0; padding-top: 0; 
-                padding-left: 15px; border-left: 1px solid #333;
-                flex: 1; min-width: 250px;
-            }
-            
-            .main-content { order: 1; height: 60vh; }
-            
-            /* Pro Mode Mobile: เรียงแนวตั้ง */
-            #pro-mode-container {
-                flex-direction: column; padding: 20px;
-                padding-top: 80px; /* หลบปุ่ม Back */
+                box-shadow: 0 -5px 20px rgba(0,0,0,0.8);
+                border-top: 1px solid #222;
                 overflow-y: auto;
             }
+            
+            /* ปรับเมนูให้เลื่อนแนวนอนได้ */
+            .menu-group { 
+                flex-direction: row; gap: 15px; 
+                overflow-x: auto; padding-bottom: 10px;
+                justify-content: flex-start;
+                min-height: 120px;
+            }
+            
+            /* ซ่อน Scrollbar */
+            .menu-group::-webkit-scrollbar { display: none; }
+            
+            .main-btn {
+                height: 100px; width: 120px; min-width: 120px;
+                font-size: 16px; padding: 10px;
+            }
+            .btn-green { font-size: 20px; }
+            .btn-blue, .btn-purple { font-size: 18px; }
+            .btn-red { height: 100px; font-size: 18px; }
+
+            .bottom-controls {
+                flex-direction: row; flex-wrap: wrap;
+                margin-top: 10px; padding-top: 10px; border-left: none;
+                gap: 10px; justify-content: space-between;
+            }
+            .music-panel { width: auto; flex: 1; }
+            .sound-panel { width: auto; padding: 5px 15px; }
+            
+            /* พื้นที่ Viewer */
+            .main-content { order: 1; height: 50vh; flex: none; }
+            
+            /* Pro Mode Mobile: Layout ใหม่หมด */
+            #pro-mode-container {
+                flex-direction: column; padding: 20px;
+                padding-top: 70px; /* หลบปุ่ม Back */
+                overflow-y: auto;
+                background: rgba(0,0,0,0.95);
+            }
+            
+            .back-btn { top: 15px; left: 15px; padding: 8px 15px; font-size: 16px; width: auto; }
+            #status-bar { top: 20px; left: auto; right: 15px; bottom: auto; text-align: right; width: 50%; font-size: 12px; }
+
+            /* แสดงปุ่ม Lock บนมือถือ */
+            #mobile-lock-btn { display: flex; }
+
+            .pro-left-group, .pro-right-group {
+                width: 100%; padding: 0; border: none; display: flex;
+            }
             .pro-left-group {
-                width: 100%; height: auto;
-                border-right: none; border-bottom: 1px solid rgba(255,255,255,0.1);
-                padding: 20px 0; flex-direction: row; gap: 10px;
+                flex-direction: row; gap: 15px; margin-bottom: 20px;
             }
             .pro-right-group {
-                width: 100%; height: auto;
-                padding: 20px 0; gap: 10px;
+                display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding-bottom: 100px; /* เว้นที่ให้ปุ่ม Lock */
             }
-            .big-btn { height: 150px; }
-            .small-btn { max-height: 150px; }
 
-            .footer-status { top: 10px; right: 10px; bottom: auto; }
-            .footer-text { display: none; } /* ซ่อนข้อความในมือถือให้เหลือแต่โลโก้ */
+            .big-btn { height: 140px; width: 100%; }
+            .small-btn { height: 120px; width: 100%; max-height: none; }
+
+            .footer-status { display: none; } /* ซ่อน footer ในมือถือ */
         }
-
     </style>
 </head>
 <body>
@@ -289,10 +319,22 @@
     <div class="sidebar" id="main-sidebar">
         
         <div class="menu-group">
-            <button class="main-btn btn-green" onmouseenter="playSfx('hover')" onclick="playSfx('select'); window.location.href='page_Starter.html'"><span data-lang="starter">โหมดผู้เริ่มต้น</span></button>
-            <button class="main-btn btn-blue" onmouseenter="playSfx('hover')" onclick="toggleProMode()"><span data-lang="pro">โหมดมืออาชีพ</span></button>
-            <button class="main-btn btn-red" onmouseenter="playSfx('hover')" onclick="playSfx('select'); window.location.href='setting_cnc.html'"><span data-lang="setup">โหมดตั้งค่า</span></button>
-            <button class="main-btn btn-purple" onmouseenter="playSfx('hover')" onclick="runToolMeasure()"><span data-lang="measure">วัดความยาว<br>เครื่องมือ</span></button>
+            <button class="main-btn btn-green" onclick="playSfx('select'); window.location.href='page_Starter.html'">
+                <i class="fa-solid fa-play" style="display:block; margin-bottom:5px;"></i>
+                <span data-lang="starter">โหมด<br>ผู้เริ่มต้น</span>
+            </button>
+            <button class="main-btn btn-blue" onclick="toggleProMode()">
+                <i class="fa-solid fa-gamepad" style="display:block; margin-bottom:5px;"></i>
+                <span data-lang="pro">โหมด<br>มืออาชีพ</span>
+            </button>
+            <button class="main-btn btn-red" onclick="playSfx('select'); alert('Setup Mode')">
+                <i class="fa-solid fa-gear" style="display:block; margin-bottom:5px;"></i>
+                <span data-lang="setup">ตั้งค่า</span>
+            </button>
+            <button class="main-btn btn-purple" onclick="runToolMeasure()">
+                <i class="fa-solid fa-ruler-vertical" style="display:block; margin-bottom:5px;"></i>
+                <span data-lang="measure">วัดความยาว<br>เครื่องมือ</span>
+            </button>
         </div>
 
         <div class="bottom-controls">
@@ -306,14 +348,14 @@
             <div class="sound-panel">
                 <i id="mute-btn" class="fa-solid fa-volume-xmark" onclick="toggleBGM()"></i>
                 <div class="vol-levels">
-                    <div class="vol-btn active" id="vol-10" onclick="setVolume(0.1, 'vol-10')">10</div>
-                    <div class="vol-btn" id="vol-30" onclick="setVolume(0.3, 'vol-30')">30</div>
-                    <div class="vol-btn" id="vol-60" onclick="setVolume(0.6, 'vol-60')">60</div>
+                    <div class="vol-btn" onclick="setVolume(0.1, this)">L</div>
+                    <div class="vol-btn active" onclick="setVolume(0.5, this)">M</div>
+                    <div class="vol-btn" onclick="setVolume(1.0, this)">H</div>
                 </div>
             </div>
 
             <div class="lang-switch" onclick="toggleLanguage()">
-                <i class="fa-solid fa-globe"></i> <span id="lang-text">TH / ENG</span>
+                <i class="fa-solid fa-globe"></i> <span id="lang-text">TH</span>
             </div>
         </div>
 
@@ -322,7 +364,7 @@
     <div class="main-content" id="viewer-area">
         <div id="viewer-container" class="fade-element">
             <div class="sketchfab-embed-wrapper" style="width:100%; height:100%;"> 
-                <iframe title="Cnc2900" frameborder="0" allowfullscreen mozallowfullscreen="true" webkitallowfullscreen="true" allow="autoplay; fullscreen; xr-spatial-tracking" xr-spatial-tracking execution-while-out-of-viewport execution-while-not-rendered web-share src="https://sketchfab.com/models/93ddb40173fe438180c7b9fc4559b92a/embed?autostart=1&annotations_visible=1&annotation_cycle=5"> </iframe> 
+                <iframe title="Cnc2900" frameborder="0" allowfullscreen mozallowfullscreen="true" webkitallowfullscreen="true" allow="autoplay; fullscreen; xr-spatial-tracking" xr-spatial-tracking execution-while-out-of-viewport execution-while-not-rendered web-share src="https://sketchfab.com/models/93ddb40173fe438180c7b9fc4559b92a/embed?autostart=1&annotations_visible=1&ui_theme=dark"> </iframe> 
             </div>
         </div>
     </div>
@@ -330,58 +372,64 @@
     <div id="pro-mode-container" class="fade-element">
         
         <div class="back-btn" onclick="toggleProMode()">
-            <i class="fa-solid fa-arrow-left"></i> <span data-lang="back">BACK / กลับเมนูหลัก</span>
+            <i class="fa-solid fa-arrow-left"></i> <span data-lang="back">BACK</span>
         </div>
-        <div id="status-bar"><i class="fa-solid fa-triangle-exclamation"></i> <span data-lang="status_idle">HOLD [CTRL] TO UNLOCK</span></div>
         
+        <div id="status-bar"><i class="fa-solid fa-triangle-exclamation"></i> <span data-lang="status_idle" id="status-text">HOLD [CTRL]</span></div>
+        
+        <div id="mobile-lock-btn" onclick="toggleMobileLock()">
+            <i class="fa-solid fa-lock"></i>
+        </div>
+
         <div class="pro-left-group">
             <div class="cmd-btn big-btn" data-cmd="run_6p_joy">
-                <div class="cmd-btn-img" style="background-image: url('images/6p_joy_start.png');"></div>
+                <div class="cmd-btn-img" style="background-image: url('images/6p_joy_start.png'); background-color: #222; border-radius:15px;"></div>
             </div>
             <div class="cmd-btn big-btn" data-cmd="run_6p_cam">
-                <div class="cmd-btn-img" style="background-image: url('images/6p_cam_start.png');"></div>
+                <div class="cmd-btn-img" style="background-image: url('images/6p_cam_start.png'); background-color: #222; border-radius:15px;"></div>
             </div>
         </div>
 
         <div class="pro-right-group">
             <div class="cmd-btn small-btn" data-cmd="run_4p_joy">
-                <div class="cmd-btn-img" style="background-image: url('images/4p_joy_start.png');"></div>
+                <div class="cmd-btn-img" style="background-image: url('images/4p_joy_start.png'); background-color: #222; border-radius:15px;"></div>
             </div>
             <div class="cmd-btn small-btn" data-cmd="run_3p_cam">
-                <div class="cmd-btn-img" style="background-image: url('images/3p_cam_start.png');"></div>
+                <div class="cmd-btn-img" style="background-image: url('images/3p_cam_start.png'); background-color: #222; border-radius:15px;"></div>
             </div>
             
             <div class="cmd-btn small-btn" data-cmd="run_3p_joy">
-                <div class="cmd-btn-img" style="background-image: url('images/3p_joy_start.png');"></div>
+                <div class="cmd-btn-img" style="background-image: url('images/3p_joy_start.png'); background-color: #222; border-radius:15px;"></div>
             </div>
             <div class="cmd-btn small-btn" data-cmd="run_4p_cam">
-                <div class="cmd-btn-img" style="background-image: url('images/4p_cam_start.png');"></div>
+                <div class="cmd-btn-img" style="background-image: url('images/4p_cam_start.png'); background-color: #222; border-radius:15px;"></div>
             </div>
         </div>
     </div>
 
     <div class="footer-status">
         <div class="status-dot"></div>
-        <span class="footer-text">OO CNC Interface powerby Maker Customs OS</span>
-        <img src="images/oologo.png" alt="OO Logo" class="footer-logo">
+        <span class="footer-text">OO CNC Interface</span>
+        <img src="images/oologo.png" alt="OO" class="footer-logo">
     </div>
 
     <audio id="sfx-hover" preload="auto"> <source src="sounds/ui_hover.wav" type="audio/wav"> </audio>
     <audio id="sfx-select" preload="auto"> <source src="sounds/ui_select.wav" type="audio/wav"> </audio>
     <audio id="sfx-start" preload="auto"> <source src="sounds/ui_start.wav" type="audio/wav"> </audio>
+    <audio id="sfx-lock" preload="auto"> <source src="sounds/ui_lock.wav" type="audio/wav"> </audio>
 
     <script>
         // --- TRANSLATIONS ---
         const translations = {
             th: { 
-                starter: "โหมดผู้เริ่มต้น", pro: "โหมดมืออาชีพ", setup: "ตั้งค่า", measure: "วัดความยาว\nเครื่องมือ",
-                status_idle: "กด [CTRL] ค้างไว้เพื่อปลดล็อค", status_armed: "พร้อมใช้งาน",
-                back: "BACK / กลับเมนูหลัก", lang_text: "TH / ENG"
+                starter: "โหมดผู้เริ่มต้น", pro: "โหมดมืออาชีพ", setup: "ตั้งค่า", measure: "วัดความยาว",
+                status_idle: "กด [CTRL] หรือแตะ Lock เพื่อปลดล็อค", status_armed: "ระบบพร้อมทำงาน",
+                back: "กลับเมนูหลัก", lang_text: "TH"
             },
             en: { 
-                starter: "STARTER MODE", pro: "PRO MODE", setup: "SETUP", measure: "MEASURE\nTOOL LENGTH",
-                status_idle: "HOLD [CTRL] TO UNLOCK", status_armed: "SYSTEM READY",
-                back: "BACK / MAIN MENU", lang_text: "TH / ENG"
+                starter: "STARTER", pro: "PRO MODE", setup: "SETUP", measure: "MEASURE",
+                status_idle: "HOLD [CTRL] OR TAP LOCK", status_armed: "SYSTEM ARMED",
+                back: "BACK", lang_text: "EN"
             }
         };
         let currentLang = 'th';
@@ -392,53 +440,42 @@
             document.getElementById('lang-text').innerText = translations[currentLang].lang_text;
             document.querySelectorAll('[data-lang]').forEach(el => {
                 const key = el.getAttribute('data-lang');
-                if(translations[currentLang][key]) el.innerText = translations[currentLang][key];
+                if(translations[currentLang][key]) el.innerHTML = translations[currentLang][key].replace(/\n/g, '<br>');
             });
+            updateStatusText();
         }
 
         // --- MUSIC LOGIC ---
         const bgm = document.getElementById('bgm');
-        const muteBtn = document.getElementById('mute-btn');
-        bgm.volume = 0.1;
-
-        const tracks = {
-            focus: "sounds/focus.mp3",
-            war: "sounds/war.mp3",
-            hero: "sounds/hero.mp3"
-        };
+        bgm.volume = 0.5;
 
         function changeTrack(trackName, btnEl) {
             playSfx('select');
-            bgm.src = tracks[trackName];
-            bgm.play().then(() => { updateMuteIcon(); }).catch(e => console.log(e));
+            // Mock change (replace with real files)
             document.querySelectorAll('.music-btn').forEach(b => b.classList.remove('active'));
             btnEl.classList.add('active');
         }
 
         function toggleBGM() {
-            if(bgm.paused) { bgm.play().then(() => updateMuteIcon()); } 
-            else { bgm.pause(); updateMuteIcon(); }
+            const btn = document.getElementById('mute-btn');
+            if(bgm.paused) { bgm.play(); btn.classList.replace('fa-volume-xmark', 'fa-volume-high'); btn.classList.add('active'); } 
+            else { bgm.pause(); btn.classList.replace('fa-volume-high', 'fa-volume-xmark'); btn.classList.remove('active'); }
         }
 
-        function setVolume(level, btnId) {
+        function setVolume(level, btnEl) {
             bgm.volume = level;
-            if(bgm.paused) toggleBGM();
             document.querySelectorAll('.vol-btn').forEach(b => b.classList.remove('active'));
-            document.getElementById(btnId).classList.add('active');
-        }
-
-        function updateMuteIcon() {
-            if(bgm.paused) { muteBtn.classList.remove('fa-volume-high', 'active'); muteBtn.classList.add('fa-volume-xmark'); } 
-            else { muteBtn.classList.remove('fa-volume-xmark'); muteBtn.classList.add('fa-volume-high', 'active'); }
+            btnEl.classList.add('active');
         }
 
         // --- UI TOGGLES ---
         function toggleProMode() {
             playSfx('select');
             const p = document.getElementById('pro-mode-container');
-            // เช็ค flex แทน block เพื่อให้ layout ถูกต้อง
             if(p.style.display === 'flex') {
                 p.style.opacity = 0; setTimeout(() => { p.style.display = 'none'; }, 300);
+                // Reset Lock when closing
+                if(isMobileLocked) toggleMobileLock();
             } else {
                 p.style.display = 'flex'; requestAnimationFrame(() => { p.style.opacity = 1; });
             }
@@ -446,48 +483,89 @@
 
         function runToolMeasure() {
             playSfx('select');
-            const btn = document.querySelector('.btn-purple');
-            btn.style.transform = "scale(0.95)"; setTimeout(() => btn.style.transform = "scale(1)", 150);
             if(window.ahk) window.ahk.global.CNC_Execute('run_tool_man');
+            else alert("Connecting to CNC...");
         }
 
         function playSfx(id) {
             const s = document.getElementById('sfx-'+id);
-            if(s){ s.currentTime=0; s.volume=(id==='hover'?0.4:1.0); s.play().catch(()=>{}); }
+            if(s && s.readyState >= 2){ s.currentTime=0; s.play().catch(()=>{}); }
         }
 
-        // --- CTRL LOGIC ---
+        // --- SAFETY / CTRL LOGIC ---
         let isCtrl = false;
+        let isMobileLocked = false;
         const btns = document.querySelectorAll('.cmd-btn');
         const statusBar = document.getElementById('status-bar');
-        const statusTextEl = document.querySelector('[data-lang="status_idle"]');
+        const statusTextEl = document.getElementById('status-text');
+        const lockBtn = document.getElementById('mobile-lock-btn');
+        const lockIcon = lockBtn.querySelector('i');
 
-        document.addEventListener('keydown', e => {
-            if(e.key === 'Control' && !isCtrl) {
-                isCtrl = true;
+        function setSystemState(armed) {
+            isCtrl = armed;
+            if(armed) {
                 statusTextEl.innerText = translations[currentLang].status_armed;
-                statusBar.classList.add('active'); 
+                statusBar.classList.add('active');
                 btns.forEach(b => b.classList.add('unlocked'));
-                playSfx('hover');
-            }
-        });
-        document.addEventListener('keyup', e => {
-            if(e.key === 'Control') {
-                isCtrl = false;
+                playSfx('hover'); // Sound indicating armed
+            } else {
                 statusTextEl.innerText = translations[currentLang].status_idle;
                 statusBar.classList.remove('active');
                 btns.forEach(b => b.classList.remove('unlocked'));
             }
+        }
+
+        function updateStatusText() {
+            statusTextEl.innerText = isCtrl ? translations[currentLang].status_armed : translations[currentLang].status_idle;
+        }
+
+        // Keyboard Logic (Desktop)
+        document.addEventListener('keydown', e => {
+            if(e.key === 'Control' && !isCtrl && !isMobileLocked) setSystemState(true);
         });
+        document.addEventListener('keyup', e => {
+            if(e.key === 'Control' && !isMobileLocked) setSystemState(false);
+        });
+
+        // Mobile Lock Toggle Logic
+        function toggleMobileLock() {
+            isMobileLocked = !isMobileLocked;
+            if(isMobileLocked) {
+                lockBtn.classList.add('unlocked');
+                lockIcon.classList.replace('fa-lock', 'fa-lock-open');
+                setSystemState(true);
+            } else {
+                lockBtn.classList.remove('unlocked');
+                lockIcon.classList.replace('fa-lock-open', 'fa-lock');
+                setSystemState(false);
+            }
+        }
+
+        // Button Interactions
         btns.forEach(btn => {
-            btn.addEventListener('mouseenter', () => { if(isCtrl) playSfx('hover'); });
             btn.addEventListener('click', () => {
                 if(isCtrl) {
                     playSfx('start');
-                    if(window.ahk) window.ahk.global.CNC_Execute(btn.getAttribute('data-cmd'));
-                } else { playSfx('select'); }
+                    // Add visual feedback
+                    btn.style.transform = "scale(0.9)";
+                    setTimeout(() => btn.style.transform = "scale(1)", 150);
+                    
+                    const cmd = btn.getAttribute('data-cmd');
+                    if(window.ahk) window.ahk.global.CNC_Execute(cmd);
+                    else console.log("Execute: " + cmd);
+                    
+                    // Auto-lock on mobile after command for safety? (Optional)
+                    // if(isMobileLocked) toggleMobileLock(); 
+                } else { 
+                    playSfx('select'); 
+                    // Shake effect if locked
+                    btn.style.transform = "translateX(5px)";
+                    setTimeout(() => btn.style.transform = "translateX(-5px)", 50);
+                    setTimeout(() => btn.style.transform = "none", 100);
+                }
             });
         });
+
     </script>
 </body>
 </html>
