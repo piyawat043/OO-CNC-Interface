@@ -250,7 +250,15 @@
 
         .main-content { flex: 1; position: relative; overflow: hidden; }
         .fade-element { opacity: 1; transition: opacity 0.4s ease; }
-        #viewer-container { width: 100%; height: 100%; }
+        #viewer-container { 
+    width: 100%; 
+    height: 100%; 
+    
+    /* เพิ่ม 2 บรรทัดนี้ครับ */
+    padding: 40px;          /* กำหนดระยะห่างจากขอบจอ (ปรับตัวเลขได้ตามใจชอบ) */
+    box-sizing: border-box; /* สำคัญมาก! สั่งให้รวม padding เข้าไปในขนาด 100% ไม่ให้จอล้น */
+}
+
         iframe { width: 100%; height: 100%; border: none; }
 
         .back-btn {
