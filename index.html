@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Maker Customs OS - OO CNC Interface (Demo)</title>
-    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;700;800&family=Prompt:wght@400;700&display=swap" rel="stylesheet">
+    <title>Maker Customs OS - OO CNC Interface</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@600;700;800&family=Prompt:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
@@ -35,7 +35,7 @@
         }
 
         /* =========================================
-           2. TOP UI GROUP
+           TOP UI GROUP
            ========================================= */
        .top-ui-group {
             position: absolute;
@@ -94,7 +94,7 @@
 
 
         /* =========================================
-           3. SIDEBAR (Desktop Default)
+           SIDEBAR (Desktop Default)
            ========================================= */
         .sidebar {
             width: 420px; 
@@ -125,62 +125,163 @@
             box-shadow: 0 10px 20px rgba(0,0,0,0.5);
             text-align: center;
             position: relative; overflow: hidden;
-            
-            /* REMOVED CTRL LOGIC: ACTIVE BY DEFAULT */
-            filter: grayscale(0%); opacity: 1; pointer-events: auto;
         }
         
         .main-btn:hover { 
-            transform: scale(1.15) translateY(-5px); 
-            background-color: #15181e; 
-            box-shadow: 0 0 30px var(--c-blue), 0 0 60px rgba(0, 243, 255, 0.5);
-            border: 2px solid var(--c-blue);
+            transform: scale(1.1) translateY(-5px); 
+            background-color: #1a1d24; 
+            box-shadow: 0 20px 40px rgba(0,0,0,0.7); 
             z-index: 10;
         }
-        
         .main-btn:active { transform: scale(0.95); }
 
-        .btn-title { font-family: 'Rajdhani', sans-serif; font-weight: 800; line-height: 1; margin-bottom: 5px; transition: 0.3s; }
+        .btn-title { font-family: 'Rajdhani', sans-serif; font-weight: 800; line-height: 1; margin-bottom: 5px; }
         .btn-sub { font-family: 'Prompt', sans-serif; font-weight: 500; font-size: 14px; opacity: 0.7; }
         .btn-icon { font-size: 40px; margin-bottom: 10px; }
-
-        .main-btn:hover .btn-title {
-            color: #fff;
-            text-shadow: 0 0 15px var(--c-blue);
-        }
 
         .btn-green { height: 140px; border-bottom: 4px solid rgba(0,255,102,0.2); color: var(--c-green); }
         .btn-green .btn-title { font-size: 32px; text-shadow: 0 0 15px rgba(0,255,102,0.4); }
 
         .btn-blue { height: 90px; border-bottom: 4px solid rgba(0,243,255,0.2); color: var(--c-blue); }
         .btn-blue .btn-title { font-size: 24px; text-shadow: 0 0 15px rgba(0,243,255,0.4); }
-        .btn-blue { box-shadow: 0 0 20px rgba(0, 243, 255, 0.3); } /* ACTIVE LOOK */
 
         .btn-gold { 
             height: 220px; border: 2px solid rgba(255, 215, 0, 0.1);
             border-bottom: 6px solid var(--c-gold); color: var(--c-gold);
             background: radial-gradient(circle at center, #1a1500 0%, #0f1115 100%);
-            box-shadow: 0 0 50px rgba(255, 215, 0, 0.2); /* ACTIVE LOOK */
         }
         .btn-gold .btn-title { font-size: 48px; text-shadow: 0 0 30px rgba(255,215,0,0.6); letter-spacing: 2px; }
         .btn-gold .btn-icon { filter: drop-shadow(0 0 10px var(--c-gold)); animation: pulse-gold 2s infinite; }
         @keyframes pulse-gold { 0% { opacity: 0.8; transform: scale(1); } 50% { opacity: 1; transform: scale(1.1); } 100% { opacity: 0.8; transform: scale(1); } }
 
+        /* =========================================
+           STATE CONTROL CSS
+           ========================================= */
+        body:not(.ctrl-active) .btn-green { filter: grayscale(0%); opacity: 1; box-shadow: 0 0 20px rgba(0, 255, 102, 0.2); }
+        body:not(.ctrl-active) .btn-blue,
+        body:not(.ctrl-active) .btn-gold { filter: grayscale(100%); opacity: 0.3; transform: scale(0.95); pointer-events: none; }
 
-        /* Transition for Fading */
+        body.ctrl-active .btn-green { filter: grayscale(100%); opacity: 0.2; transform: scale(0.95); pointer-events: none; }
+        body.ctrl-active .btn-blue,
+        body.ctrl-active .btn-gold { filter: grayscale(0%); opacity: 1; transform: scale(1); pointer-events: auto; }
+        
+        body.ctrl-active .btn-blue { box-shadow: 0 0 20px rgba(0, 243, 255, 0.3); }
+        body.ctrl-active .btn-gold { box-shadow: 0 0 50px rgba(255, 215, 0, 0.4); border-color: var(--c-gold); }
+
+        body.ctrl-active .btn-blue:hover,
+        body.ctrl-active .btn-gold:hover { transform: scale(1.35) translateX(20px); z-index: 100; filter: brightness(1.3); }
+
         .top-ui-group, .footer-status {
             transition: opacity 0.3s ease, transform 0.3s ease;
         }
-        
+
         /* =========================================
-           4. PRO/GOD MODE LAYOUT
+           VIEWER SWITCHER & INTRO STYLES
+           ========================================= */
+        .view-switcher {
+            position: absolute;
+            
+            /* --- แก้ไข: จัดกึ่งกลางหน้าจอแบบเป๊ะๆ --- */
+            top: auto; 
+            right: auto;
+            bottom: 30px; 
+            left: 50%; /* เปลี่ยนจาก 90% เป็น 50% เพื่อเริ่มที่กลางจอ */
+            transform: translateX(-50%); /* ดึงกลับมาซ้าย 50% ของตัวปุ่ม = กลางเป๊ะ */
+            /* ------------------------------------ */
+
+            z-index: 3000;
+            display: flex; gap: 0;
+            background: #111;
+            border-radius: 30px;
+            border: 1px solid #333;
+            overflow: hidden;
+            box-shadow: 0 0 15px rgba(0,0,0,0.8);
+        }
+        .view-btn {
+            padding: 10px 25px;
+            font-family: 'Rajdhani', sans-serif;
+            font-weight: 700;
+            font-size: 16px;
+            cursor: pointer;
+            color: #666;
+            background: transparent;
+            border: none;
+            transition: 0.3s;
+            text-transform: uppercase;
+        }
+        .view-btn:hover { color: #fff; background: #222; }
+        .view-btn.active {
+            background: var(--c-blue);
+            color: #000;
+            box-shadow: 0 0 15px var(--c-blue);
+        }
+
+        /* INTRO CONTAINER STYLES */
+        .intro-wrapper {
+            width: 100%; height: 80%;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            background: #000;
+            padding: 40px; box-sizing: border-box;
+        }
+        .intro-box {
+            width: 90%; max-width: 1000px;
+            text-align: center;
+            border: 1px solid #333;
+            box-shadow: 0 0 50px rgba(0, 243, 255, 0.1);
+            background: #050505;
+            padding: 20px; border-radius: 10px;
+        }
+        .intro-box video {
+            width: 80%; border-radius: 5px;
+            border-bottom: 2px solid var(--c-blue);
+            margin-bottom: 30px;
+            box-shadow: 0 0 20px rgba(0, 204, 255, 0.2);
+        }
+        .text-display-area {
+            height: 140px; display: flex; flex-direction: column;
+            justify-content: center; align-items: center; position: relative;
+        }
+        .intro-main-text {
+            font-family: 'Orbitron', 'Prompt', sans-serif;
+            font-size: 2.2em; font-weight: 700; text-transform: uppercase;
+            color: #ffffff; letter-spacing: 2px;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.8), 0 0 20px rgba(0, 255, 255, 0.5);
+            margin: 0; opacity: 0; transform: translateY(20px);
+            transition: all 0.6s ease-out; line-height: 1.2;
+        }
+        .intro-sub-text {
+            font-family: 'Prompt', sans-serif;
+            font-size: 1.3em; font-weight: 300;
+            color: var(--c-blue); margin-top: 10px;
+            opacity: 0; transform: translateY(10px);
+            transition: all 0.6s ease-out 0.2s;
+        }
+        .text-display-area.active .intro-main-text { opacity: 1; transform: translateY(0); }
+        .text-display-area.active .intro-sub-text { opacity: 1; transform: translateY(0); }
+
+
+        /* =========================================
+           MAIN CONTENT AREA
+           ========================================= */
+        .main-content { flex: 1; position: relative; overflow: hidden; background: #000; }
+        .fade-element { opacity: 1; transition: opacity 0.4s ease; }
+        
+        /* Viewer Container (3D) */
+        #viewer-container { 
+            width: 100%; height: 100%; 
+            padding: 60px; box-sizing: border-box; 
+            display: none; 
+        }
+        iframe { width: 100%; height: 100%; border: none; }
+
+        /* =========================================
+           PRO/GOD MODE LAYOUT
            ========================================= */
         #pro-mode-container {
             display: none; opacity: 0; 
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
             z-index: 2000; background: radial-gradient(circle at center, #1a1500 0%, #000 100%);
-            padding-top: 40px;
-            padding-bottom: 40px; 
+            padding-top: 40px; padding-bottom: 40px; 
             box-sizing: border-box; flex-direction: row; align-items: stretch;
         }
         .pro-left-group {
@@ -191,91 +292,46 @@
         .big-btn { height: 60%; max-height: 380px; }
         .small-btn { height: 60%; max-height: 240px; aspect-ratio: 1/1; justify-self: center; }
 
-        /* --- BUTTONS ALWAYS ACTIVE (NO CTRL) --- */
         .cmd-btn-img {
             width: 100%; height: 100%; 
             background-size: contain; background-repeat: no-repeat; background-position: center;
             transition: 0.2s; 
-            /* Default: Visible and Colored */
-            opacity: 0.7; 
-            filter: grayscale(20%); 
+            opacity: 0.4; filter: grayscale(100%);
         }
         
         .cmd-btn { 
-            cursor: pointer; /* Always Hand */
-            pointer-events: auto; /* Always Clickable */
-            transition: transform 0.2s;
-        }
-
-        /* Hover Effect */
-        .cmd-btn:hover { 
-            transform: scale(1.1); 
-            z-index: 100; 
-        }
-
-        .cmd-btn:hover .cmd-btn-img { 
-            opacity: 1; 
-            filter: drop-shadow(0 0 30px var(--c-blue)) brightness(1.2); /* Blue Glow on Hover */
-            filter: grayscale(0%);
-        }
-
-        .cmd-btn:active { transform: scale(0.95); }
-
-
-        /* =========================================
-           GATEWAY & INNER BUTTONS (DEMO MODE)
-           ========================================= */
-        
-        .gateway-custom { border-color: var(--c-gold) !important; box-shadow: 0 0 15px rgba(255, 215, 0, 0.1) !important; }
-        
-        .door-custom { opacity: 1 !important; filter: grayscale(0%) !important; pointer-events: auto !important; }
-        .door-custom div { color: var(--c-gold) !important; }
-
-        /* Hover State: Open Door */
-        .gateway-custom:hover .door-custom {
-            opacity: 0 !important;
-            transform: scale(1) !important;
-            pointer-events: none !important;
-        }
-
-        .gateway-custom:hover .gateway-inner {
-            opacity: 1 !important;
-        }
-
-        .inner-btn {
-            cursor: pointer !important;
-            pointer-events: auto !important;
-        }
-
-        /* Inner Button Pop-out Effect */
-        .inner-btn:hover {
-            transform: scale(1.8) !important;
-            z-index: 999 !important;
-            background: transparent !important;
-            box-shadow: none !important;
-            border: none !important;
-        }
-
-        .inner-btn:hover div {
-             filter: drop-shadow(0 0 30px var(--c-blue)) brightness(1.2); 
-        }
-
-        .gateway-custom:hover {
-            overflow: visible !important; 
-            z-index: 100; 
-        }
-
-        .cmd-btn {
+            cursor: not-allowed; pointer-events: none; transition: transform 0.2s;
             background: transparent; border: none; position: relative; 
-            display: flex; justify-content: center; align-items: center;
-            transition: transform 0.3s ease-out; width: 70%;
+            display: flex; justify-content: center; align-items: center; width: 70%;
         }
 
+        /* Ctrl Active States */
+        body.ctrl-active .cmd-btn { cursor: pointer; pointer-events: auto; }
+        body.ctrl-active .cmd-btn .cmd-btn-img { opacity: 0.5; filter: grayscale(100%) drop-shadow(0 0 10px var(--c-gold)); }
+        body.ctrl-active .cmd-btn:hover { transform: scale(1.2); z-index: 100; }
+        body.ctrl-active .cmd-btn:hover .cmd-btn-img { opacity: 1; filter: drop-shadow(0 0 30px var(--c-blue)) brightness(1.1); }
+        body.ctrl-active .cmd-btn:active { transform: scale(0.95); }
+        body.ctrl-active .cmd-btn:active .cmd-btn-img { filter: none; opacity: 1; }
 
-        /* FOOTER STATUS */
+        /* Gateway & Inner Buttons Logic */
+        body.ctrl-active .gateway-custom { border-color: var(--c-gold) !important; box-shadow: 0 0 15px rgba(255, 215, 0, 0.1) !important; }
+        body.ctrl-active .door-custom { opacity: 1 !important; filter: grayscale(0%) !important; pointer-events: auto !important; }
+        body.ctrl-active .door-custom div { color: var(--c-gold) !important; }
+        body.ctrl-active .gateway-custom:hover .door-custom { opacity: 0 !important; transform: scale(1) !important; pointer-events: none !important; }
+        body.ctrl-active .gateway-custom:hover .gateway-inner { opacity: 1 !important; }
+        body.ctrl-active .inner-btn:hover { transform: scale(2) !important; z-index: 999 !important; background: transparent !important; box-shadow: none !important; border: none !important; }
+        body.ctrl-active .inner-btn:hover div { filter: drop-shadow(0 0 30px var(--c-blue)) brightness(1.1); }
+        body.ctrl-active .gateway-custom:hover { overflow: visible !important; z-index: 100; }
+
+        /* Tool Vertical Button Logic */
+        body.ctrl-active .tool-vertical-btn { cursor: pointer !important; border: none !important; background: transparent !important; box-shadow: none !important; }
+        body.ctrl-active .tool-vertical-btn .cmd-btn-img { opacity: 1 !important; filter: grayscale(0%) drop-shadow(0 0 15px rgba(255, 255, 255, 0.4)) !important; }
+        body.ctrl-active .tool-vertical-btn:hover { transform: scale(1.3); background: transparent !important; filter: drop-shadow(0 0 30px var(--c-blue)) brightness(1.3); }
+
+        /* Footer & Status Bar */
         .footer-status {
-            position: absolute; bottom: 20px; right: 30px;
-            display: flex; align-items: center; gap: 12px; z-index: 50; pointer-events: none;
+            position: absolute; bottom: 20px; left: 30px;
+            display: flex; align-items: center; gap: 12px; z-index: 999; pointer-events: none;
         }
         .status-dot { width: 8px; height: 8px; background-color: #00ff66; border-radius: 50%; box-shadow: 0 0 8px #00ff66; }
         .footer-text {
@@ -284,18 +340,8 @@
         }
         .footer-logo { height: 35px; width: auto; opacity: 0.9; }
 
-        .main-content { flex: 1; position: relative; overflow: hidden; }
-        .fade-element { opacity: 1; transition: opacity 0.4s ease; }
-        #viewer-container { 
-            width: 100%; height: 100%; 
-            padding: 60px;
-            box-sizing: border-box; 
-        }
-        iframe { width: 100%; height: 100%; border: none; }
-
-      .back-btn {
-            position: absolute; 
-            top: auto; bottom: 40px; left: 40px;
+        .back-btn {
+            position: absolute; bottom: 40px; left: 40px;
             font-size: 20px; color: #666; font-weight: bold;
             cursor: pointer; display: flex; align-items: center; gap: 10px;
             padding: 10px 20px; border-radius: 30px; border: 2px solid #333;
@@ -303,50 +349,56 @@
         }
         .back-btn:hover { color: var(--c-gold); border-color: var(--c-gold); background: rgba(255,215,0,0.1); }
 
-      #status-bar {
-            position: absolute; 
-            top: 40px; left: 40px; bottom: auto;
+        #status-bar {
+            position: absolute; top: 40px; left: 40px;
             font-size: 16px; font-weight: 600; letter-spacing: 1px;
             padding: 10px 0; transition: 0.3s;
-            color: var(--c-gold); opacity: 1; text-shadow: 0 0 10px var(--c-gold); /* Always Active */
+            color: #ffffff; opacity: 0.7; animation: pulse-text 1.5s infinite ease-in-out;
             z-index: 50; pointer-events: none;
         }
+        #status-bar.active { color: var(--c-gold); opacity: 1; text-shadow: 0 0 10px var(--c-gold); animation: none; }
+        @keyframes pulse-text { 0% { opacity: 0.5; } 50% { opacity: 1; } 100% { opacity: 0.5; } }
+
 
         /* =========================================
-           5. MOBILE RESPONSIVE
+           MOBILE RESPONSIVE FIXED
            ========================================= */
-        @media screen and (max-width: 900px) {
-            body { flex-direction: column; } 
-            
-            .sidebar { 
-                width: 100%; height: 35vh; flex-direction: row; 
-                padding: 10px; order: 2; overflow-x: auto;
-                box-shadow: 0 -10px 30px rgba(0,0,0,0.8);
-                align-items: center; gap: 15px;
+        @media (max-width: 768px) {
+            body {
+                flex-direction: column; /* เปลี่ยนเป็นแนวตั้ง */
             }
-            
+
+            .main-content {
+                order: 1;           /* main content อยู่บน */
+                width: 100%;
+                height: auto;
+            }
+
+            .sidebar {
+                order: 2;           /* sidebar อยู่ล่าง */
+                width: 100%;        /* กว้างเต็มหน้าจอ */
+                height: auto;       /* ปรับความสูงตามเนื้อหา */
+                box-shadow: 0 -10px 30px rgba(0,0,0,0.5); /* เงาขึ้นข้างบนแทน */
+            }
+
             .menu-group { 
                 flex-direction: row; gap: 15px; flex: 2;
-                overflow-x: auto; height: 100%; align-items: center; 
+                overflow-x: auto; height: auto; align-items: center; 
+                padding: 10px 0;
             }
+            .main-btn { width: auto; min-width: 140px; padding: 0 15px; flex-direction: row; gap: 10px; height: 80px !important; }
             
-            .main-btn { width: auto; min-width: 120px; padding: 0 15px; }
-            
-            .btn-green { height: 70%; }
-            .btn-blue { height: 60%; }
-            .btn-gold { height: 80%; min-width: 160px; }
-            .btn-gold .btn-title { font-size: 24px; }
-            .btn-icon { font-size: 24px; margin-bottom: 5px; }
+            .btn-green, .btn-blue, .btn-gold { height: auto; min-width: 120px; border: 1px solid #333; }
+            .btn-title { font-size: 18px !important; }
+            .btn-sub { display: none; }
+            .btn-icon { font-size: 20px; margin: 0; }
 
             .main-content { order: 1; height: 65vh; }
             
             #pro-mode-container { flex-direction: column; padding: 20px; padding-top: 60px; overflow-y: auto; }
-            .pro-left-group { width: 100%; height: auto; border-right: none; border-bottom: 1px solid rgba(255,255,255,0.1); padding: 20px 0; flex-direction: row; gap: 10px; }
-            
-            .pro-right-group { 
-                width: 100% !important; 
-                height: auto; padding: 20px 0 !important; gap: 10px; 
-            }
+            .pro-left-group { width: 100% !important; height: auto; border-right: none; border-bottom: 1px solid rgba(255,255,255,0.1); padding: 20px 0; flex-direction: row; gap: 10px; }
+            .pro-middle-group { width: 100% !important; padding: 20px 0 !important; }
+            .pro-right-group { width: 100% !important; height: auto; padding: 20px 0 !important; gap: 10px; }
             
             .big-btn { height: 150px; }
             .small-btn { max-height: 150px; }
@@ -354,27 +406,13 @@
             .footer-status { top: 10px; right: 10px; bottom: auto; }
             .footer-text { display: none; } 
             .top-ui-group { top: 15px; left: 15px; max-width: 200px; }
-        }
+            
+            /* ปรับตำแหน่งปุ่มสลับวิวในมือถือ */
+            .view-switcher { bottom: 10px; }
+            .view-btn { padding: 5px 10px; font-size: 14px; }
         
-        /* Tool Vertical Button */
-        .tool-vertical-btn {
-            cursor: pointer !important;
-            border: none !important;
-            background: transparent !important;
-            box-shadow: none !important;
-        }
+        } /* <--- ปิดปีกกาตรงนี้ ถึงจะถูกต้อง */
 
-        .tool-vertical-btn .cmd-btn-img {
-            opacity: 1 !important;
-            filter: grayscale(0%) drop-shadow(0 0 15px rgba(255, 255, 255, 0.4)) !important;
-        }
-        
-        .tool-vertical-btn:hover {
-            transform: scale(1.3); 
-            background: transparent !important;
-            filter: drop-shadow(0 0 30px var(--c-blue)) brightness(1.3);
-        }
-        
     </style>
 </head>
 <body>
@@ -405,27 +443,46 @@
 
     <div class="sidebar" id="main-sidebar">
         <div class="menu-group">
-            
-            <button class="main-btn btn-green" onmouseenter="playSfx('hover')" onclick="playSfx('select');">
+            <button class="main-btn btn-green" onmouseenter="playSfx('hover')" onclick="playSfx('select'); window.location.href='page_Starter.html'">
                 <div class="btn-title" data-lang="starter">BEGINNER MODE</div>
                 <div class="btn-sub" data-lang="starter_sub">โหมดผู้เริ่มต้น</div>
             </button>
-            
-            <button class="main-btn btn-blue" onmouseenter="playSfx('hover')" onclick="playSfx('select');">
+            <button class="main-btn btn-blue" onmouseenter="playSfx('hover')" onclick="playSfx('select'); window.location.href='setting_cnc.html'">
                 <div class="btn-title" data-lang="setup">SETUP MODE</div>
                 <div class="btn-sub" data-lang="setup_sub">โหมดตั้งค่า</div>
             </button>
-            
             <button class="main-btn btn-gold" onmouseenter="playSfx('hover')" onclick="toggleProMode()">
                 <div class="btn-icon"><i class="fa-solid fa-bolt"></i></div>
                 <div class="btn-title" data-lang="god">GOD MODE</div>
                 <div class="btn-sub" data-lang="god_sub">โหมดเทพเจ้า</div>
             </button>
-            
         </div>
     </div>
 
     <div class="main-content" id="viewer-area">
+        
+        <div class="view-switcher">
+            <button class="view-btn active" id="btn-view-intro" onclick="switchView('intro')">
+                <i class="fa-solid fa-film"></i> INTRO
+            </button>
+            <button class="view-btn" id="btn-view-3d" onclick="switchView('3d')">
+                <i class="fa-solid fa-cube"></i> 3D VIEW
+            </button>
+        </div>
+
+        <div id="intro-container" class="intro-wrapper fade-element">
+            <div class="intro-box">
+                <video id="introVideo" autoplay muted controls>
+                    <source src="intro.mp4" type="video/mp4">
+                    Browser ของคุณไม่รองรับการเล่นวีดีโอ
+                </video>
+                <div class="text-display-area" id="introTextArea">
+                    <h1 class="intro-main-text" id="introMainText">MAKER CUSTOMS OS</h1>
+                    <p class="intro-sub-text" id="introSubText">กำลังเริ่มระบบปฏิบัติการหลัก...</p>
+                </div>
+            </div>
+        </div>
+
         <div id="viewer-container" class="fade-element">
             <div class="sketchfab-embed-wrapper" style="width:100%; height:100%;"> 
                 <iframe title="Cnc2900" frameborder="0" allowfullscreen mozallowfullscreen="true" webkitallowfullscreen="true" allow="autoplay; fullscreen; xr-spatial-tracking" xr-spatial-tracking execution-while-out-of-viewport execution-while-not-rendered web-share src="https://sketchfab.com/models/93ddb40173fe438180c7b9fc4559b92a/embed?autostart=1&annotations_visible=1&annotation_cycle=5"> </iframe> 
@@ -433,14 +490,14 @@
         </div>
     </div>
 
-<div id="pro-mode-container" class="fade-element" style="display: none; opacity: 0; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 2000; background: radial-gradient(circle at center, #1a1500 0%, #000 100%); padding-top: 140px; padding-bottom: 40px; box-sizing: border-box; flex-direction: row; align-items: stretch;">
+    <div id="pro-mode-container" class="fade-element" style="display: none; opacity: 0;">
         
         <div class="back-btn" onclick="toggleProMode()">
             <i class="fa-solid fa-arrow-left"></i> <span data-lang="back">BACK</span>
         </div>
-<div id="status-bar"><i class="fa-solid fa-circle-check"></i> <span data-lang="status_idle">INTERACTIVE DEMO MODE</span></div>
+        <div id="status-bar"><i class="fa-solid fa-triangle-exclamation"></i> <span data-lang="status_idle">HOLD [CTRL] TO UNLOCK GOD MODE</span></div>
         
-        <div class="pro-left-group" style="width: 45%; display: flex; flex-direction: column; justify-content: center; gap: 40px; padding: 20px 40px; border-right: none;">
+        <div class="pro-left-group" style="width: 50%; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px 40px; border-right: none;">
             <div class="cmd-btn big-btn" data-cmd="run_6p_joy">
                 <div class="cmd-btn-img" style="background-image: url('images/6p_joy_start.png');"></div>
             </div>
@@ -449,33 +506,19 @@
             </div>
         </div>
 
-
-<div class="pro-middle-group" style="width: 10%; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px 0;">
-            
+        <div class="pro-middle-group" style="width: 15%; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 10px 0;">
             <button class="cmd-btn tool-vertical-btn" data-cmd="run_tool_man" 
-                    style="width: 100%; height: 85%; 
-                           background: transparent; 
-                           border: none; 
-                           padding: 0;
-                           position: relative; 
-                           margin-right: 30px; 
-                           display: flex; justify-content: center; align-items: center;">
-                
+                    style="width: 65%; height: 65%; margin-right: 50px; display: flex; justify-content: center; align-items: center;">
                 <div class="cmd-btn-img" 
                      style="width: 100%; height: 100%; 
                             background-image: url('images/tool_man_start.png'); 
-                            background-size: contain; 
-                            background-repeat: no-repeat; 
-                            background-position: center; 
-                            transition: 0.3s;">
+                            background-size: contain; background-repeat: no-repeat; background-position: center; 
+                            opacity: 0.3; filter: grayscale(100%); transition: 0.3s;">
                 </div>
-                
             </button>
-
         </div>
 
-        <div class="pro-right-group" style="width: 45%; display: flex; flex-direction: column; gap: 40px; padding: 50px 40px; justify-content: center;">
-            
+        <div class="pro-right-group" style="width: 35%; display: flex; flex-direction: column; gap: 40px; padding: 50px 40px; justify-content: center;">
             <div class="gateway-custom" style="position: relative; width: 80%; height: 230px; border-radius: 12px; overflow: hidden; border: 1px solid rgba(255, 255, 255, 0.1); background: #000; transition: 0.3s;">
                 <div class="gateway-inner" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; z-index: 1; opacity: 0; transition: opacity 0.3s;">
                     <div class="cmd-btn inner-btn" data-cmd="run_4p_joy" style="flex: 1; background: #111; border-right: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: transform 0.2s;">
@@ -485,7 +528,7 @@
                         <div style="width: 70%; height: 70%; background-image: url('images/4p_cam_start.png'); background-size: contain; background-repeat: no-repeat; background-position: center;"></div>
                     </div>
                 </div>
-                <div class="door-custom" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 10; transition: all 0.4s; display: flex; align-items: center; justify-content: center; pointer-events: none;">
+                <div class="door-custom" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 10; transition: all 0.4s; display: flex; align-items: center; justify-content: center; opacity: 0.3; filter: grayscale(100%); pointer-events: none;">
                     <img src="images/4pcon.png" alt="4 Point Corner" style="height: 90%; width: auto; object-fit: contain;">
                 </div>
             </div>
@@ -499,13 +542,12 @@
                         <div style="width: 70%; height: 70%; background-image: url('images/3p_cam_start.png'); background-size: contain; background-repeat: no-repeat; background-position: center;"></div>
                     </div>
                 </div>
-                <div class="door-custom" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 10; transition: all 0.4s; display: flex; align-items: center; justify-content: center; pointer-events: none;">
+                <div class="door-custom" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 10; transition: all 0.4s; display: flex; align-items: center; justify-content: center; opacity: 0.3; filter: grayscale(100%); pointer-events: none;">
                     <img src="images/3pcircle.png" alt="3 Point Circle" style="height: 90%; width: auto; object-fit: contain;">
                 </div>
             </div>
 
-<div class="gateway-custom" style="position: relative; width: 80%; height: 230px; border-radius: 12px; overflow: hidden; border: 1px solid rgba(255, 255, 255, 0.1); background: #000; transition: 0.3s;">
-                
+            <div class="gateway-custom" style="position: relative; width: 80%; height: 230px; border-radius: 12px; overflow: hidden; border: 1px solid rgba(255, 255, 255, 0.1); background: #000; transition: 0.3s;">
                 <div class="gateway-inner" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; z-index: 1; opacity: 0; transition: opacity 0.3s;">
                     <div class="cmd-btn inner-btn" data-cmd="run_savez_joy" style="flex: 1; background: #111; border-right: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), background 0.3s;">
                          <div style="width: 80%; height: 80%; background-image: url('images/zsave_joy.png'); background-size: contain; background-repeat: no-repeat; background-position: center;"></div>
@@ -514,32 +556,27 @@
                         <div style="width: 80%; height: 80%; background-image: url('images/zsave_cam.png'); background-size: contain; background-repeat: no-repeat; background-position: center;"></div>
                     </div>
                 </div>
-
-                <div class="door-custom" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 10; transition: all 0.4s; display: flex; align-items: center; justify-content: center; pointer-events: none;">
+                <div class="door-custom" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 10; transition: all 0.4s; display: flex; align-items: center; justify-content: center; opacity: 0.3; filter: grayscale(100%); pointer-events: none;">
                     <img src="images/zsave.png" alt="SAVE Z" style="height: 90%; width: auto; object-fit: contain;">
                 </div>
             </div>
 
             <div class="gateway-custom" style="position: relative; width: 70%; height: 200px; border-radius: 12px; overflow: hidden; border: 1px solid rgba(255, 255, 255, 0.1); background: #000; transition: 0.3s;">
                 <div class="gateway-inner" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; z-index: 1; opacity: 0; transition: opacity 0.3s;">
-                
                     <div class="cmd-btn inner-btn" data-cmd="run_manual_z" style="flex: 1; background: #111; border-right: 1px solid rgba(255,255,255,0.1); display: flex; flex-direction: row; align-items: center; justify-content: center; cursor: pointer; transition: transform 0.2s; color: #ccc;">
-           
                          <span style="font-weight: bold; font-size: 18px;text-align: center;">Z<br>CALCULATE</span>
                     </div>
-                    
                     <div class="cmd-btn inner-btn" data-cmd="run_manual_xy" style="flex: 1; background: #111; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; transition: transform 0.2s; color: #ccc;">
                         <span style="font-weight: bold; font-size: 18px; text-align: center;">XY<br>OFFSET</span>
                     </div>
                 </div>
-                <div class="door-custom" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 10; transition: all 0.4s; display: flex; flex-direction: column; align-items: center; justify-content: center; pointer-events: none;">
+                <div class="door-custom" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 10; transition: all 0.4s; display: flex; flex-direction: column; align-items: center; justify-content: center; opacity: 0.3; filter: grayscale(100%); pointer-events: none;">
                     <i class="fa-solid fa-hand" style="font-size: 80px; color: #888; margin-bottom: 10px;"></i>
                     <span style="font-size: 20px; font-weight: bold; color: #888;">MANUAL</span>
                 </div>
             </div>
-
         </div>
-
+    </div>
 
     <div class="footer-status">
         <div class="status-dot"></div>
@@ -558,14 +595,14 @@
                 starter: "BEGINNER MODE", starter_sub: "โหมดผู้เริ่มต้น",
                 setup: "SETUP MODE", setup_sub: "โหมดตั้งค่า",
                 god: "GOD MODE", god_sub: "โหมดเทพเจ้า",
-                status_idle: "INTERACTIVE DEMO MODE", 
+                status_idle: "กด [CTRL] ค้างไว้เพื่อปลดล็อค", status_armed: "พร้อมใช้งาน",
                 back: "BACK / กลับเมนูหลัก", lang_text: "TH / ENG"
             },
             en: { 
                 starter: "BEGINNER MODE", starter_sub: "Easy Operation",
                 setup: "SETUP MODE", setup_sub: "Configuration",
                 god: "GOD MODE", god_sub: "Ultimate Control",
-                status_idle: "INTERACTIVE DEMO MODE", 
+                status_idle: "HOLD [CTRL] TO UNLOCK", status_armed: "SYSTEM READY",
                 back: "BACK / MAIN MENU", lang_text: "TH / ENG"
             }
         };
@@ -625,43 +662,120 @@
             }
         }
 
-        // --- UI TOGGLES ---
-function toggleProMode() {
+        // ==========================================
+        //  VIEW SWITCHER LOGIC (Intro vs 3D)
+        // ==========================================
+        function switchView(viewName) {
+            playSfx('select');
+            const introDiv = document.getElementById('intro-container');
+            const viewDiv = document.getElementById('viewer-container');
+            const btnIntro = document.getElementById('btn-view-intro');
+            const btn3D = document.getElementById('btn-view-3d');
+            const introVideo = document.getElementById('introVideo');
+
+            if (viewName === 'intro') {
+                // Show Intro
+                introDiv.style.display = 'flex';
+                viewDiv.style.display = 'none';
+                
+                // Active Button State
+                btnIntro.classList.add('active');
+                btn3D.classList.remove('active');
+
+            } else {
+                // Show 3D
+                introDiv.style.display = 'none';
+                viewDiv.style.display = 'block';
+
+                // Pause video to save resources and stop sound overlapping
+                introVideo.pause();
+
+                // Active Button State
+                btn3D.classList.add('active');
+                btnIntro.classList.remove('active');
+            }
+        }
+
+        // ==========================================
+        //  INTRO PRESENTATION LOGIC
+        // ==========================================
+        const presentationData = [
+            { start: 0, end: 3, main: "MAKER CUSTOMS OS", sub: "กำลังเริ่มระบบปฏิบัติการหลัก..." },
+            { start: 4, end: 8, main: "6-POINT ALIGNMENT", sub: "ระบบวัด 6 จุด: ใช้คณิตศาสตร์แทนจิ๊กจับยึด" },
+            { start: 9, end: 13, main: "INSTANT TOOL COMP", sub: "เปลี่ยนหัวกัดไร้รอยต่อ ลดความผิดพลาด 100%" },
+            { start: 14, end: 18, main: "VISION ASSISTED", sub: "ระบบกล้องนำทาง: มองเห็น... เล็งเป้า... กัดงาน" },
+            { start: 19, end: 24, main: "HUMAN-CENTRIC", sub: "เข้าใจมนุษย์: มีระบบช่วยเตือนและกันลืม" },
+            { start: 25, end: 30, main: "DESIGNED FOR MAKERS", sub: "เครื่องจักรของคุณ... กฎของคุณ" }
+        ];
+
+        const introVideo = document.getElementById('introVideo');
+        const introTextArea = document.getElementById('introTextArea');
+        const introMainText = document.getElementById('introMainText');
+        const introSubText = document.getElementById('introSubText');
+        let currentIntroIndex = -1;
+
+        introVideo.addEventListener('timeupdate', () => {
+            const currentTime = introVideo.currentTime;
+            let activeItem = null;
+            let activeIndex = -1;
+
+            for (let i = 0; i < presentationData.length; i++) {
+                if (currentTime >= presentationData[i].start && currentTime < presentationData[i].end) {
+                    activeItem = presentationData[i];
+                    activeIndex = i;
+                    break;
+                }
+            }
+
+            if (activeIndex !== currentIntroIndex) {
+                if (activeItem) {
+                    introTextArea.classList.remove('active');
+                    setTimeout(() => {
+                        introMainText.innerText = activeItem.main;
+                        introSubText.innerText = activeItem.sub;
+                        introTextArea.classList.add('active');
+                    }, 200);
+                } else {
+                    introTextArea.classList.remove('active');
+                }
+                currentIntroIndex = activeIndex;
+            }
+        });
+
+
+        // --- UI TOGGLES (God Mode) ---
+        function toggleProMode() {
             playSfx('select');
             const p = document.getElementById('pro-mode-container');
             const topUi = document.querySelector('.top-ui-group');
             const footer = document.querySelector('.footer-status');
 
             if(p.style.display === 'flex') {
-                // Close
+                // Close God Mode
                 p.style.opacity = 0; 
-                
                 if(topUi) { 
                     topUi.style.opacity = '1'; 
                     topUi.style.transform = 'translateY(0)';
-                    topUi.style.pointerEvents = 'auto'; 
+                    topUi.style.pointerEvents = 'auto';
                 }
                 if(footer) { 
                     footer.style.opacity = '1'; 
                     footer.style.transform = 'translateY(0)';
                 }
-
                 setTimeout(() => { p.style.display = 'none'; }, 300);
 
             } else {
-                // Open
+                // Open God Mode
                 p.style.display = 'flex'; 
-                
                 if(topUi) { 
                     topUi.style.opacity = '0'; 
-                    topUi.style.transform = 'translateY(-20px)'; 
-                    topUi.style.pointerEvents = 'none'; 
+                    topUi.style.transform = 'translateY(-20px)';
+                    topUi.style.pointerEvents = 'none';
                 }
                 if(footer) { 
                     footer.style.opacity = '0'; 
-                    footer.style.transform = 'translateY(20px)'; 
+                    footer.style.transform = 'translateY(20px)';
                 }
-
                 requestAnimationFrame(() => { p.style.opacity = 1; });
             }
         }
@@ -671,24 +785,43 @@ function toggleProMode() {
             if(s){ s.currentTime=0; s.volume=(id==='hover'?0.4:1.0); s.play().catch(()=>{}); }
         }
 
-        // --- DEMO LOGIC (CTRL REMOVED) ---
+        // --- CTRL LOGIC ---
+        let isCtrl = false;
         const btns = document.querySelectorAll('.cmd-btn');
+        const statusBar = document.getElementById('status-bar');
+        const statusTextEl = document.querySelector('[data-lang="status_idle"]');
+
+        document.addEventListener('keydown', e => {
+            if(e.key === 'Control' && !isCtrl) {
+                isCtrl = true;
+                document.body.classList.add('ctrl-active');
+                statusTextEl.innerText = translations[currentLang].status_armed;
+                statusBar.classList.add('active'); 
+                btns.forEach(b => b.classList.add('unlocked'));
+                playSfx('hover');
+            }
+        });
         
+        document.addEventListener('keyup', e => {
+            if(e.key === 'Control') {
+                isCtrl = false;
+                document.body.classList.remove('ctrl-active');
+                statusTextEl.innerText = translations[currentLang].status_idle;
+                statusBar.classList.remove('active');
+                btns.forEach(b => b.classList.remove('unlocked'));
+            }
+        });
+
         btns.forEach(btn => {
-            btn.addEventListener('mouseenter', () => { 
-               playSfx('hover'); 
-            });
-            
+            btn.addEventListener('mouseenter', () => { if(isCtrl) playSfx('hover'); });
             btn.addEventListener('click', () => {
-                playSfx('start');
-                console.log('DEMO MODE: Execute Command > ' + btn.getAttribute('data-cmd'));
-                // Animation Feedback (Optional)
-                btn.style.transform = "scale(0.9)";
-                setTimeout(() => { btn.style.transform = ""; }, 100);
+                if(isCtrl) {
+                    playSfx('start');
+                    if(window.ahk) window.ahk.global.CNC_Execute(btn.getAttribute('data-cmd'));
+                } else { playSfx('select'); }
             });
         });
         
-        // Init Mute Icon state
         updateMuteIcon();
     </script>
 </body>
