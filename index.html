@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
+	
         /* =========================================
            1. CORE & THEME
            ========================================= */
@@ -32,6 +33,21 @@
             display: flex;
             overflow: hidden;
             user-select: none;
+        }
+
+        body, button, .btn-title, .footer-text, .status-bar, .intro-sub-text {
+            font-family: 'Rajdhani', 'Prompt', sans-serif;
+        }
+        
+        h1, .intro-main-text, .god-mode-title {
+            font-family: 'Orbitron', sans-serif;
+            letter-spacing: 3px;
+        }
+
+        /* ปรับ Status Bar เดิมให้ขยับหลบหน่อย ถ้าหน้าจอเล็ก */
+        #status-bar {
+            top: 45px; left: 50%; transform: translateX(-50%); /* ย้ายมาตรงกลาง */
+            width: auto; text-align: center;
         }
 
         /* =========================================
@@ -144,6 +160,9 @@
 
         .btn-blue { height: 90px; border-bottom: 4px solid rgba(0,243,255,0.2); color: var(--c-blue); }
         .btn-blue .btn-title { font-size: 24px; text-shadow: 0 0 15px rgba(0,243,255,0.4); }
+        /* Always Active Blue Style */
+        .btn-blue { filter: grayscale(0%); opacity: 1; transform: scale(1); pointer-events: auto; box-shadow: 0 0 20px rgba(0, 243, 255, 0.3); }
+        .btn-blue:hover { transform: scale(1.1) translateY(-5px); }
 
         .btn-gold { 
             height: 220px; border: 2px solid rgba(255, 215, 0, 0.1);
@@ -152,25 +171,17 @@
         }
         .btn-gold .btn-title { font-size: 48px; text-shadow: 0 0 30px rgba(255,215,0,0.6); letter-spacing: 2px; }
         .btn-gold .btn-icon { filter: drop-shadow(0 0 10px var(--c-gold)); animation: pulse-gold 2s infinite; }
+        /* Always Active Gold Style */
+        .btn-gold { filter: grayscale(0%); opacity: 1; transform: scale(1); pointer-events: auto; box-shadow: 0 0 50px rgba(255, 215, 0, 0.4); border-color: var(--c-gold); }
+        .btn-gold:hover { transform: scale(1.1) translateY(-5px); }
+
         @keyframes pulse-gold { 0% { opacity: 0.8; transform: scale(1); } 50% { opacity: 1; transform: scale(1.1); } 100% { opacity: 0.8; transform: scale(1); } }
 
         /* =========================================
-           STATE CONTROL CSS
+           STATE CONTROL CSS (REMOVED LOCK STATES)
            ========================================= */
-        body:not(.ctrl-active) .btn-green { filter: grayscale(0%); opacity: 1; box-shadow: 0 0 20px rgba(0, 255, 102, 0.2); }
-        body:not(.ctrl-active) .btn-blue,
-        body:not(.ctrl-active) .btn-gold { filter: grayscale(100%); opacity: 0.3; transform: scale(0.95); pointer-events: none; }
-
-        body.ctrl-active .btn-green { filter: grayscale(100%); opacity: 0.2; transform: scale(0.95); pointer-events: none; }
-        body.ctrl-active .btn-blue,
-        body.ctrl-active .btn-gold { filter: grayscale(0%); opacity: 1; transform: scale(1); pointer-events: auto; }
+        /* All buttons are now active by default */
         
-        body.ctrl-active .btn-blue { box-shadow: 0 0 20px rgba(0, 243, 255, 0.3); }
-        body.ctrl-active .btn-gold { box-shadow: 0 0 50px rgba(255, 215, 0, 0.4); border-color: var(--c-gold); }
-
-        body.ctrl-active .btn-blue:hover,
-        body.ctrl-active .btn-gold:hover { transform: scale(1.35) translateX(20px); z-index: 100; filter: brightness(1.3); }
-
         .top-ui-group, .footer-status {
             transition: opacity 0.3s ease, transform 0.3s ease;
         }
@@ -178,47 +189,53 @@
         /* =========================================
            VIEWER SWITCHER & INTRO STYLES
            ========================================= */
-        .view-switcher {
+     .view-switcher {
             position: absolute;
-            
-            /* --- แก้ไข: จัดกึ่งกลางหน้าจอแบบเป๊ะๆ --- */
-            top: auto; 
-            right: auto;
-            bottom: 30px; 
-            left: 50%; /* เปลี่ยนจาก 90% เป็น 50% เพื่อเริ่มที่กลางจอ */
-            transform: translateX(-50%); /* ดึงกลับมาซ้าย 50% ของตัวปุ่ม = กลางเป๊ะ */
-            /* ------------------------------------ */
-
-            z-index: 3000;
-            display: flex; gap: 0;
-            background: #111;
-            border-radius: 30px;
-            border: 1px solid #333;
-            overflow: hidden;
-            box-shadow: 0 0 15px rgba(0,0,0,0.8);
-        }
-        .view-btn {
-            padding: 10px 25px;
-            font-family: 'Rajdhani', sans-serif;
-            font-weight: 700;
-            font-size: 16px;
-            cursor: pointer;
-            color: #666;
+            top: 20px; 
+            right: 20px;
+            bottom: auto; left: auto; 
+            transform: none;
+            display: flex; 
+            flex-direction: column;
+            gap: 10px;
             background: transparent;
             border: none;
-            transition: 0.3s;
-            text-transform: uppercase;
+            border-radius: 0;
+            box-shadow: none;
+            z-index: 1000;
         }
-        .view-btn:hover { color: #fff; background: #222; }
+
+        .view-btn {
+            width: 140px; 
+            text-align: right; 
+            padding: 12px 20px;
+            background: rgba(0, 0, 0, 0.6); 
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-right: 3px solid #444; 
+            color: #aaa;
+            border-radius: 4px;
+            backdrop-filter: blur(4px);
+            display: flex; align-items: center; justify-content: flex-end; gap: 10px;
+            transition: all 0.2s ease;
+        }
+        
+        .view-btn:hover {
+            background: rgba(30, 30, 30, 0.9);
+            color: white;
+            transform: translateX(-5px);
+        }
+
         .view-btn.active {
-            background: var(--c-blue);
-            color: #000;
-            box-shadow: 0 0 15px var(--c-blue);
+            background: rgba(0, 243, 255, 0.1);
+            color: var(--c-blue);
+            border-color: var(--c-blue);
+            border-right-color: var(--c-blue);
+            box-shadow: -5px 0 15px rgba(0, 243, 255, 0.1);
         }
 
         /* INTRO CONTAINER STYLES */
         .intro-wrapper {
-            width: 100%; height: 80%;
+            width: 100%; height: 100%;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
             background: #000;
             padding: 40px; box-sizing: border-box;
@@ -296,37 +313,37 @@
             width: 100%; height: 100%; 
             background-size: contain; background-repeat: no-repeat; background-position: center;
             transition: 0.2s; 
-            opacity: 0.4; filter: grayscale(100%);
+            opacity: 1; /* Always Visible */
+            filter: grayscale(0%); /* No grayscale */
         }
         
         .cmd-btn { 
-            cursor: not-allowed; pointer-events: none; transition: transform 0.2s;
+            cursor: pointer; pointer-events: auto; transition: transform 0.2s;
             background: transparent; border: none; position: relative; 
             display: flex; justify-content: center; align-items: center; width: 70%;
         }
 
-        /* Ctrl Active States */
-        body.ctrl-active .cmd-btn { cursor: pointer; pointer-events: auto; }
-        body.ctrl-active .cmd-btn .cmd-btn-img { opacity: 0.5; filter: grayscale(100%) drop-shadow(0 0 10px var(--c-gold)); }
-        body.ctrl-active .cmd-btn:hover { transform: scale(1.2); z-index: 100; }
-        body.ctrl-active .cmd-btn:hover .cmd-btn-img { opacity: 1; filter: drop-shadow(0 0 30px var(--c-blue)) brightness(1.1); }
-        body.ctrl-active .cmd-btn:active { transform: scale(0.95); }
-        body.ctrl-active .cmd-btn:active .cmd-btn-img { filter: none; opacity: 1; }
+        /* Always Active States for Pro Mode Buttons */
+        .cmd-btn .cmd-btn-img { opacity: 0.8; filter: drop-shadow(0 0 5px var(--c-gold)); }
+        .cmd-btn:hover { transform: scale(1.2); z-index: 100; }
+        .cmd-btn:hover .cmd-btn-img { opacity: 1; filter: drop-shadow(0 0 30px var(--c-blue)) brightness(1.1); }
+        .cmd-btn:active { transform: scale(0.95); }
+        .cmd-btn:active .cmd-btn-img { filter: none; opacity: 1; }
 
-        /* Gateway & Inner Buttons Logic */
-        body.ctrl-active .gateway-custom { border-color: var(--c-gold) !important; box-shadow: 0 0 15px rgba(255, 215, 0, 0.1) !important; }
-        body.ctrl-active .door-custom { opacity: 1 !important; filter: grayscale(0%) !important; pointer-events: auto !important; }
-        body.ctrl-active .door-custom div { color: var(--c-gold) !important; }
-        body.ctrl-active .gateway-custom:hover .door-custom { opacity: 0 !important; transform: scale(1) !important; pointer-events: none !important; }
-        body.ctrl-active .gateway-custom:hover .gateway-inner { opacity: 1 !important; }
-        body.ctrl-active .inner-btn:hover { transform: scale(2) !important; z-index: 999 !important; background: transparent !important; box-shadow: none !important; border: none !important; }
-        body.ctrl-active .inner-btn:hover div { filter: drop-shadow(0 0 30px var(--c-blue)) brightness(1.1); }
-        body.ctrl-active .gateway-custom:hover { overflow: visible !important; z-index: 100; }
+        /* Gateway & Inner Buttons Logic (ALWAYS UNLOCKED) */
+        .gateway-custom { border-color: var(--c-gold) !important; box-shadow: 0 0 15px rgba(255, 215, 0, 0.1) !important; }
+        .door-custom { opacity: 1 !important; filter: grayscale(0%) !important; pointer-events: auto !important; }
+        .door-custom div { color: var(--c-gold) !important; }
+        .gateway-custom:hover .door-custom { opacity: 0 !important; transform: scale(1) !important; pointer-events: none !important; }
+        .gateway-custom:hover .gateway-inner { opacity: 1 !important; }
+        .inner-btn:hover { transform: scale(2) !important; z-index: 999 !important; background: transparent !important; box-shadow: none !important; border: none !important; }
+        .inner-btn:hover div { filter: drop-shadow(0 0 30px var(--c-blue)) brightness(1.1); }
+        .gateway-custom:hover { overflow: visible !important; z-index: 100; }
 
         /* Tool Vertical Button Logic */
-        body.ctrl-active .tool-vertical-btn { cursor: pointer !important; border: none !important; background: transparent !important; box-shadow: none !important; }
-        body.ctrl-active .tool-vertical-btn .cmd-btn-img { opacity: 1 !important; filter: grayscale(0%) drop-shadow(0 0 15px rgba(255, 255, 255, 0.4)) !important; }
-        body.ctrl-active .tool-vertical-btn:hover { transform: scale(1.3); background: transparent !important; filter: drop-shadow(0 0 30px var(--c-blue)) brightness(1.3); }
+        .tool-vertical-btn { cursor: pointer !important; border: none !important; background: transparent !important; box-shadow: none !important; }
+        .tool-vertical-btn .cmd-btn-img { opacity: 1 !important; filter: grayscale(0%) drop-shadow(0 0 15px rgba(255, 255, 255, 0.4)) !important; }
+        .tool-vertical-btn:hover { transform: scale(1.3); background: transparent !important; filter: drop-shadow(0 0 30px var(--c-blue)) brightness(1.3); }
 
         /* Footer & Status Bar */
         .footer-status {
@@ -353,11 +370,9 @@
             position: absolute; top: 40px; left: 40px;
             font-size: 16px; font-weight: 600; letter-spacing: 1px;
             padding: 10px 0; transition: 0.3s;
-            color: #ffffff; opacity: 0.7; animation: pulse-text 1.5s infinite ease-in-out;
+            color: var(--c-gold); opacity: 1; text-shadow: 0 0 10px var(--c-gold);
             z-index: 50; pointer-events: none;
         }
-        #status-bar.active { color: var(--c-gold); opacity: 1; text-shadow: 0 0 10px var(--c-gold); animation: none; }
-        @keyframes pulse-text { 0% { opacity: 0.5; } 50% { opacity: 1; } 100% { opacity: 0.5; } }
 
 
         /* =========================================
@@ -365,20 +380,20 @@
            ========================================= */
         @media (max-width: 768px) {
             body {
-                flex-direction: column; /* เปลี่ยนเป็นแนวตั้ง */
+                flex-direction: column; 
             }
 
             .main-content {
-                order: 1;           /* main content อยู่บน */
+                order: 1;           
                 width: 100%;
                 height: auto;
             }
 
             .sidebar {
-                order: 2;           /* sidebar อยู่ล่าง */
-                width: 100%;        /* กว้างเต็มหน้าจอ */
-                height: auto;       /* ปรับความสูงตามเนื้อหา */
-                box-shadow: 0 -10px 30px rgba(0,0,0,0.5); /* เงาขึ้นข้างบนแทน */
+                order: 2;          
+                width: 100%;       
+                height: auto;      
+                box-shadow: 0 -10px 30px rgba(0,0,0,0.5);
             }
 
             .menu-group { 
@@ -411,7 +426,22 @@
             .view-switcher { bottom: 10px; }
             .view-btn { padding: 5px 10px; font-size: 14px; }
         
-        } /* <--- ปิดปีกกาตรงนี้ ถึงจะถูกต้อง */
+        }
+
+        #example-container {
+            box-sizing: border-box; 
+            padding: 60px;
+            background: rgba(0,0,0,0.5); 
+        }
+        
+        .sketchfab-embed-wrapper {
+            width: 100%; 
+            height: 100%; 
+            border-radius: 12px;
+            overflow: hidden; 
+            border: 1px solid rgba(255,255,255,0.1);
+            box-shadow: 0 0 30px rgba(0,0,0,0.5);
+        }
 
     </style>
 </head>
@@ -441,17 +471,20 @@
         </div>
     </div>
 
-    <div class="sidebar" id="main-sidebar">
+ <div class="sidebar" id="main-sidebar">
         <div class="menu-group">
+            
             <button class="main-btn btn-green" onmouseenter="playSfx('hover')" onclick="playSfx('select'); window.location.href='page_Starter.html'">
                 <div class="btn-title" data-lang="starter">BEGINNER MODE</div>
                 <div class="btn-sub" data-lang="starter_sub">โหมดผู้เริ่มต้น</div>
             </button>
-            <button class="main-btn btn-blue" onmouseenter="playSfx('hover')" onclick="playSfx('select'); window.location.href='setting_cnc.html'">
+
+            <button id="btn-setup" class="main-btn btn-blue" onmouseenter="playSfx('hover')" onclick="playSfx('select'); window.location.href='setup_mode.html'">
                 <div class="btn-title" data-lang="setup">SETUP MODE</div>
                 <div class="btn-sub" data-lang="setup_sub">โหมดตั้งค่า</div>
             </button>
-            <button class="main-btn btn-gold" onmouseenter="playSfx('hover')" onclick="toggleProMode()">
+
+            <button id="btn-god" class="main-btn btn-gold" onmouseenter="playSfx('hover')" onclick="toggleProMode()">
                 <div class="btn-icon"><i class="fa-solid fa-bolt"></i></div>
                 <div class="btn-title" data-lang="god">GOD MODE</div>
                 <div class="btn-sub" data-lang="god_sub">โหมดเทพเจ้า</div>
@@ -459,14 +492,17 @@
         </div>
     </div>
 
-    <div class="main-content" id="viewer-area">
+  <div class="main-content" id="viewer-area">
         
         <div class="view-switcher">
             <button class="view-btn active" id="btn-view-intro" onclick="switchView('intro')">
-                <i class="fa-solid fa-film"></i> INTRO
+                INTRO <i class="fa-solid fa-film"></i> 
             </button>
             <button class="view-btn" id="btn-view-3d" onclick="switchView('3d')">
-                <i class="fa-solid fa-cube"></i> 3D VIEW
+                3D VIEW <i class="fa-solid fa-cube"></i>
+            </button>
+            <button class="view-btn" id="btn-view-ex" onclick="switchView('example')">
+                EXAMPLE <i class="fa-solid fa-folder-open"></i>
             </button>
         </div>
 
@@ -488,16 +524,22 @@
                 <iframe title="Cnc2900" frameborder="0" allowfullscreen mozallowfullscreen="true" webkitallowfullscreen="true" allow="autoplay; fullscreen; xr-spatial-tracking" xr-spatial-tracking execution-while-out-of-viewport execution-while-not-rendered web-share src="https://sketchfab.com/models/93ddb40173fe438180c7b9fc4559b92a/embed?autostart=1&annotations_visible=1&annotation_cycle=5"> </iframe> 
             </div>
         </div>
-    </div>
 
+<div id="example-container" class="fade-element" style="display: none; width: 100%; height: 100%;">
+               <div class="sketchfab-embed-wrapper"> <iframe title="vacuum ex" frameborder="0" allowfullscreen mozallowfullscreen="true" webkitallowfullscreen="true" allow="autoplay; fullscreen; xr-spatial-tracking" xr-spatial-tracking execution-while-out-of-viewport execution-while-not-rendered web-share src="https://sketchfab.com/models/dcd22ae94503481c863603671d2bb4cc/embed?autostart=1&annotations_visible=1&annotation=1&annotation_cycle=5&ui_theme=dark"> </iframe>
+            </div>
+        </div>
+
+    </div>
     <div id="pro-mode-container" class="fade-element" style="display: none; opacity: 0;">
         
         <div class="back-btn" onclick="toggleProMode()">
             <i class="fa-solid fa-arrow-left"></i> <span data-lang="back">BACK</span>
         </div>
-        <div id="status-bar"><i class="fa-solid fa-triangle-exclamation"></i> <span data-lang="status_idle">HOLD [CTRL] TO UNLOCK GOD MODE</span></div>
         
-        <div class="pro-left-group" style="width: 50%; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px 40px; border-right: none;">
+        <div id="status-bar"><i class="fa-solid fa-bolt"></i> <span data-lang="status_armed">SYSTEM READY</span></div>
+		
+		<div class="pro-left-group" style="width: 50%; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px 40px; border-right: none;">
             <div class="cmd-btn big-btn" data-cmd="run_6p_joy">
                 <div class="cmd-btn-img" style="background-image: url('images/6p_joy_start.png');"></div>
             </div>
@@ -588,6 +630,133 @@
     <audio id="sfx-select" preload="auto"> <source src="sounds/ui_select.wav" type="audio/wav"> </audio>
     <audio id="sfx-start" preload="auto"> <source src="sounds/ui_start.wav" type="audio/wav"> </audio>
 
+<div id="mini-sound-bar">
+    <button class="cyber-btn stop-btn" onclick="stopAudio()" title="Stop Music">⏹</button>
+    
+    <button class="cyber-btn" onclick="playLoop('D:/cnc Interface Tech/sounds/in-slow-motion.mp3', this)">FUT 1</button>
+    <button class="cyber-btn" onclick="playLoop('D:/cnc Interface Tech/sounds/nightfall-future-bass.mp3', this)">FUT 2</button>
+    <button class="cyber-btn" onclick="playLoop('D:/cnc Interface Tech/sounds/alone.mp3', this)">FUT 3</button>
+    <button class="cyber-btn" onclick="playLoop('D:/cnc Interface Tech/sounds/chill-abstract_intention.mp3', this)">CHILL</button>
+    <button class="cyber-btn" onclick="playLoop('D:/cnc Interface Tech/sounds/floating.mp3', this)">FLOAT</button>
+    <button class="cyber-btn" onclick="playLoop('D:/cnc Interface Tech/sounds/technology_pure.mp3', this)">TECH</button>
+    <button class="cyber-btn" onclick="playLoop('D:/cnc Interface Tech/sounds/epic-cinematic.mp3', this)">EPIC</button>
+    <button class="cyber-btn" onclick="playLoop('D:/cnc Interface Tech/sounds/risk.mp3', this)">RISK</button>
+    <button class="cyber-btn" onclick="playLoop('D:/cnc Interface Tech/sounds/price-of-freedom.mp3', this)">FREE</button>
+</div>
+
+<style>
+    /* Font */
+    @import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@500;700&display=swap');
+
+    #mini-sound-bar {
+        position: fixed;
+        top: 60%;
+        right: 5px;
+        width: 65px; /* ขยายความกว้างนิดนึงให้ปุ่มไม่อึดอัด */
+        background-color: #050505;
+        border: 1px solid #333;
+        border-radius: 4px;
+        padding: 4px;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        z-index: 9999;
+    }
+
+    /* สไตล์ปุ่มปกติ */
+    .cyber-btn {
+        background: #1a1a1a;
+        border: 1px solid #333;
+        color: #666;
+        font-family: 'Roboto Mono', monospace;
+        font-size: 10px;
+        font-weight: 700;
+        padding: 6px 0;
+        border-radius: 2px;
+        cursor: pointer;
+        transition: all 0.2s;
+        text-align: center;
+        width: 100%;
+    }
+
+    .cyber-btn:hover {
+        border-color: #555;
+        color: #eee;
+    }
+
+    /* --- ส่วนไฮไลท์ปุ่ม Active --- */
+    .cyber-btn.active {
+        background-color: #ffd000; /* สีเหลือง */
+        color: #000;
+        border-color: #ffd000;
+        box-shadow: 0 0 10px rgba(255, 208, 0, 0.7); /* เงาสีเหลือง */
+        animation: pulse-yellow 2s infinite; /* เพิ่มอนิเมชั่นกระพริบ */
+    }
+
+    /* Keyframes สำหรับการกระพริบ */
+    @keyframes pulse-yellow {
+        0% { box-shadow: 0 0 5px rgba(255, 208, 0, 0.5); }
+        50% { box-shadow: 0 0 15px rgba(255, 208, 0, 0.9); }
+        100% { box-shadow: 0 0 5px rgba(255, 208, 0, 0.5); }
+    }
+
+    /* ปุ่ม Stop */
+    .stop-btn {
+        border-color: #522;
+        color: #d55;
+        margin-bottom: 2px;
+    }
+    .stop-btn:hover {
+        background-color: #522;
+        color: #fff;
+    }
+    .stop-btn:active {
+        background-color: #f00;
+        box-shadow: 0 0 10px #f00;
+    }
+</style>
+
+<script>
+    let currentAudio = null;
+    let activeBtn = null; // ตัวแปรเก็บปุ่มที่กำลังทำงาน
+
+    function playLoop(path, btnElement) {
+        // 1. หยุดเพลงเก่า
+        if (currentAudio) {
+            currentAudio.pause();
+            currentAudio.currentTime = 0;
+        }
+
+        // 2. รีเซ็ตสีปุ่มเดิมให้กลับเป็นปกติ
+        if (activeBtn) {
+            activeBtn.classList.remove('active');
+        }
+
+        // 3. เริ่มเล่นเพลงใหม่
+        currentAudio = new Audio(path);
+        currentAudio.loop = true;
+        currentAudio.play().catch(e => console.error("Audio Error:", e));
+
+        // 4. เปลี่ยนสีปุ่มใหม่ให้เป็น Active
+        // 'btnElement' คือค่า 'this' ที่เราส่งมาจาก HTML
+        if (btnElement) {
+            btnElement.classList.add('active');
+            activeBtn = btnElement; // จำไว้ว่าปุ่มนี้กำลังทำงาน
+        }
+    }
+
+    function stopAudio() {
+        if (currentAudio) {
+            currentAudio.pause();
+            currentAudio.currentTime = 0;
+        }
+        // เมื่อกดหยุด ให้เอาแสงออกให้หมด
+        if (activeBtn) {
+            activeBtn.classList.remove('active');
+            activeBtn = null;
+        }
+    }
+</script>
     <script>
         // --- TRANSLATIONS ---
         const translations = {
@@ -595,14 +764,14 @@
                 starter: "BEGINNER MODE", starter_sub: "โหมดผู้เริ่มต้น",
                 setup: "SETUP MODE", setup_sub: "โหมดตั้งค่า",
                 god: "GOD MODE", god_sub: "โหมดเทพเจ้า",
-                status_idle: "กด [CTRL] ค้างไว้เพื่อปลดล็อค", status_armed: "พร้อมใช้งาน",
+                status_armed: "พร้อมใช้งาน",
                 back: "BACK / กลับเมนูหลัก", lang_text: "TH / ENG"
             },
             en: { 
                 starter: "BEGINNER MODE", starter_sub: "Easy Operation",
                 setup: "SETUP MODE", setup_sub: "Configuration",
                 god: "GOD MODE", god_sub: "Ultimate Control",
-                status_idle: "HOLD [CTRL] TO UNLOCK", status_armed: "SYSTEM READY",
+                status_armed: "SYSTEM READY",
                 back: "BACK / MAIN MENU", lang_text: "TH / ENG"
             }
         };
@@ -663,36 +832,47 @@
         }
 
         // ==========================================
-        //  VIEW SWITCHER LOGIC (Intro vs 3D)
+// ==========================================
+        //  VIEW SWITCHER LOGIC (Intro / 3D / Example)
         // ==========================================
         function switchView(viewName) {
             playSfx('select');
+            
+            // Elements
             const introDiv = document.getElementById('intro-container');
             const viewDiv = document.getElementById('viewer-container');
+            const exDiv = document.getElementById('example-container'); // รับค่า div ใหม่
+            
+            // Buttons
             const btnIntro = document.getElementById('btn-view-intro');
             const btn3D = document.getElementById('btn-view-3d');
+            const btnEx = document.getElementById('btn-view-ex'); // รับปุ่มใหม่
+            
             const introVideo = document.getElementById('introVideo');
 
+            // Reset All (ซ่อนหมดก่อน)
+            introDiv.style.display = 'none';
+            viewDiv.style.display = 'none';
+            exDiv.style.display = 'none';
+            
+            btnIntro.classList.remove('active');
+            btn3D.classList.remove('active');
+            btnEx.classList.remove('active');
+
+            // Logic การเปิด
             if (viewName === 'intro') {
-                // Show Intro
                 introDiv.style.display = 'flex';
-                viewDiv.style.display = 'none';
-                
-                // Active Button State
                 btnIntro.classList.add('active');
-                btn3D.classList.remove('active');
-
-            } else {
-                // Show 3D
-                introDiv.style.display = 'none';
+            } 
+            else if (viewName === '3d') {
                 viewDiv.style.display = 'block';
-
-                // Pause video to save resources and stop sound overlapping
-                introVideo.pause();
-
-                // Active Button State
+                introVideo.pause(); // หยุดวีดีโอเมื่อออกจากหน้า intro
                 btn3D.classList.add('active');
-                btnIntro.classList.remove('active');
+            }
+            else if (viewName === 'example') {
+                exDiv.style.display = 'block';
+                introVideo.pause();
+                btnEx.classList.add('active');
             }
         }
 
@@ -785,43 +965,27 @@
             if(s){ s.currentTime=0; s.volume=(id==='hover'?0.4:1.0); s.play().catch(()=>{}); }
         }
 
-        // --- CTRL LOGIC ---
-        let isCtrl = false;
+
+        // --- SIMPLIFIED COMMAND LOGIC (No Lock/Unlock) ---
         const btns = document.querySelectorAll('.cmd-btn');
-        const statusBar = document.getElementById('status-bar');
-        const statusTextEl = document.querySelector('[data-lang="status_idle"]');
 
-        document.addEventListener('keydown', e => {
-            if(e.key === 'Control' && !isCtrl) {
-                isCtrl = true;
-                document.body.classList.add('ctrl-active');
-                statusTextEl.innerText = translations[currentLang].status_armed;
-                statusBar.classList.add('active'); 
-                btns.forEach(b => b.classList.add('unlocked'));
-                playSfx('hover');
-            }
-        });
-        
-        document.addEventListener('keyup', e => {
-            if(e.key === 'Control') {
-                isCtrl = false;
-                document.body.classList.remove('ctrl-active');
-                statusTextEl.innerText = translations[currentLang].status_idle;
-                statusBar.classList.remove('active');
-                btns.forEach(b => b.classList.remove('unlocked'));
-            }
-        });
-
+        // Event Listeners for Command Buttons
         btns.forEach(btn => {
-            btn.addEventListener('mouseenter', () => { if(isCtrl) playSfx('hover'); });
+            btn.addEventListener('mouseenter', () => { 
+                playSfx('hover'); 
+            });
+            
             btn.addEventListener('click', () => {
-                if(isCtrl) {
-                    playSfx('start');
-                    if(window.ahk) window.ahk.global.CNC_Execute(btn.getAttribute('data-cmd'));
-                } else { playSfx('select'); }
+                // Always Execute
+                playSfx('start');
+                if(window.ahk) {
+                    window.ahk.global.CNC_Execute(btn.getAttribute('data-cmd'));
+                } else {
+                    console.log("Execute: " + btn.getAttribute('data-cmd'));
+                }
             });
         });
-        
+
         updateMuteIcon();
     </script>
 </body>
