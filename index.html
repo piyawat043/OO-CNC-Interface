@@ -442,7 +442,63 @@
             border: 1px solid rgba(255,255,255,0.1);
             box-shadow: 0 0 30px rgba(0,0,0,0.5);
         }
+/* ปรับแต่งปุ่ม View Switcher ให้รองรับเนื้อหาแนวตั้ง */
+.view-btn-custom {
+    width: 160px; /* ปรับความกว้างตามความเหมาะสม */
+    background: rgba(0, 0, 0, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    padding: 10px;
+    display: flex;
+    flex-direction: column; /* จัดเรียงเนื้อหาจากบนลงล่าง */
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    color: #aaa;
+    margin-bottom: 10px;
+}
 
+/* ข้อความด้านบนรูป */
+.view-btn-text {
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: bold;
+    font-size: 14px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+/* กรอบรูปภายในปุ่ม */
+.view-btn-img-box {
+    width: 100%;
+    height: 80px; /* ปรับความสูงของรูปในปุ่ม */
+    border-radius: 4px;
+    overflow: hidden;
+    border: 1px solid rgba(0, 243, 255, 0.2);
+}
+
+.view-btn-img-box img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.8;
+}
+
+/* สถานะ Active เมื่อเลือกปุ่ม */
+.view-btn-custom.active {
+    border-color: var(--c-blue);
+    background: rgba(0, 243, 255, 0.1);
+    color: var(--c-blue);
+    box-shadow: 0 0 15px rgba(0, 243, 255, 0.2);
+}
+
+.view-btn-custom.active .view-btn-img-box {
+    border-color: var(--c-blue);
+}
+
+.view-btn-custom.active .view-btn-img-box img {
+    opacity: 1;
+}
     </style>
 </head>
 <body>
@@ -494,17 +550,27 @@
 
   <div class="main-content" id="viewer-area">
         
-        <div class="view-switcher">
-            <button class="view-btn active" id="btn-view-intro" onclick="switchView('intro')">
-                INTRO <i class="fa-solid fa-film"></i> 
-            </button>
-            <button class="view-btn" id="btn-view-3d" onclick="switchView('3d')">
-                3D VIEW <i class="fa-solid fa-cube"></i>
-            </button>
-            <button class="view-btn" id="btn-view-ex" onclick="switchView('example')">
-                EXAMPLE <i class="fa-solid fa-folder-open"></i>
-            </button>
+       <div class="view-switcher">
+    <div class="view-btn-custom active" id="btn-view-intro" onclick="switchView('intro')">
+        <div class="view-btn-text">INTRO <i class="fa-solid fa-film"></i></div>
+        <div class="view-btn-img-box">
+            <img src="introview.png" alt="Intro"> </div>
+    </div>
+
+    <div class="view-btn-custom" id="btn-view-3d" onclick="switchView('3d')">
+        <div class="view-btn-text">3D VIEW <i class="fa-solid fa-cube"></i></div>
+        <div class="view-btn-img-box">
+            <img src="3dviewbuttom.png" alt="3D View">
         </div>
+    </div>
+
+    <div class="view-btn-custom" id="btn-view-ex" onclick="switchView('example')">
+        <div class="view-btn-text">EXAMPLE <i class="fa-solid fa-folder-open"></i></div>
+        <div class="view-btn-img-box">
+            <img src="examplebuttom.png" alt="Example">
+        </div>
+    </div>
+</div>
 
         <div id="intro-container" class="intro-wrapper fade-element">
             <div class="intro-box">
@@ -987,6 +1053,41 @@
         });
 
         updateMuteIcon();
+		
+		function switchView(viewName) {
+    playSfx('select');
+    
+    // Elements
+    const introDiv = document.getElementById('intro-container');
+    const viewDiv = document.getElementById('viewer-container');
+    const exDiv = document.getElementById('example-container');
+    
+    // Select all custom buttons
+    const allBtns = document.querySelectorAll('.view-btn-custom');
+    allBtns.forEach(btn => btn.classList.remove('active'));
+
+    // Reset Display
+    introDiv.style.display = 'none';
+    viewDiv.style.display = 'none';
+    exDiv.style.display = 'none';
+    
+    const introVideo = document.getElementById('introVideo');
+
+    if (viewName === 'intro') {
+        introDiv.style.display = 'flex';
+        document.getElementById('btn-view-intro').classList.add('active');
+    } 
+    else if (viewName === '3d') {
+        viewDiv.style.display = 'block';
+        if(introVideo) introVideo.pause();
+        document.getElementById('btn-view-3d').classList.add('active');
+    }
+    else if (viewName === 'example') {
+        exDiv.style.display = 'block';
+        if(introVideo) introVideo.pause();
+        document.getElementById('btn-view-ex').classList.add('active');
+    }
+}
     </script>
 </body>
 </html>
